@@ -1,0 +1,2736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trade From The Inside Out</title>
+<style>
+  :root {
+    --red: #C0392B;
+    --navy: #1A1A2E;
+    --navy-light: #2A2A4E;
+    --white: #FFFFFF;
+    --off-white: #F8F9FA;
+    --light-grey: #EAEDF0;
+    --mid-grey: #8C9AAB;
+    --dark-grey: #4A5568;
+    --text: #1A202C;
+    --border: #DDE2E8;
+    --success: #27AE60;
+    --warning: #E67E22;
+    --font-display: 'Georgia', 'Times New Roman', serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+    --radius: 8px;
+    --radius-lg: 16px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-body);
+    color: var(--text);
+    background: var(--white);
+    line-height: 1.65;
+    font-size: 16px;
+  }
+
+  /* NAV */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: var(--navy);
+    height: 60px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px;
+    z-index: 1000;
+    box-shadow: var(--shadow-md);
+  }
+  .nav-logo {
+    font-family: var(--font-display);
+    color: var(--white);
+    font-size: 17px;
+    font-weight: normal;
+    letter-spacing: 0.02em;
+  }
+  .nav-logo span { color: var(--red); }
+  .nav-center { display: flex; gap: 4px; }
+  .nav-btn {
+    background: none; border: none; color: rgba(255,255,255,0.65);
+    font-family: var(--font-body); font-size: 13px;
+    padding: 6px 14px; border-radius: 20px; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover, .nav-btn.active {
+    background: rgba(255,255,255,0.12); color: var(--white);
+  }
+  .nav-progress { display: flex; align-items: center; gap: 10px; }
+  .progress-bar {
+    width: 120px; height: 4px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 2px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; background: var(--red);
+    border-radius: 2px; transition: width 0.4s ease;
+  }
+  .progress-label { color: rgba(255,255,255,0.5); font-size: 12px; }
+
+  /* VIEWS */
+  .view { display: none; padding-top: 60px; min-height: 100vh; }
+  .view.active { display: block; }
+
+  /* HOME VIEW */
+  .home-hero {
+    background: var(--navy);
+    padding: 72px 24px 64px;
+    text-align: center;
+  }
+  .home-hero-eyebrow {
+    color: var(--red); font-size: 12px; letter-spacing: 0.15em;
+    text-transform: uppercase; margin-bottom: 20px;
+  }
+  .home-hero h1 {
+    font-family: var(--font-display);
+    color: var(--white); font-size: clamp(32px, 5vw, 52px);
+    font-weight: normal; line-height: 1.2;
+    margin-bottom: 20px;
+  }
+  .home-hero h1 em { color: var(--red); font-style: normal; }
+  .home-hero p {
+    color: rgba(255,255,255,0.65); font-size: 18px;
+    max-width: 580px; margin: 0 auto 36px;
+    line-height: 1.7;
+  }
+  .home-hero-quote {
+    font-family: var(--font-display);
+    color: rgba(255,255,255,0.4);
+    font-size: 15px; font-style: italic;
+    max-width: 500px; margin: 0 auto;
+  }
+
+  .home-content { max-width: 1100px; margin: 0 auto; padding: 56px 24px; }
+
+  .section-label {
+    font-size: 11px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--red);
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(24px, 3vw, 32px); font-weight: normal;
+    color: var(--navy); margin-bottom: 8px;
+  }
+  .section-sub {
+    color: var(--mid-grey); font-size: 15px; margin-bottom: 40px;
+  }
+
+  .modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 64px;
+  }
+  .module-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--white);
+    position: relative;
+    overflow: hidden;
+  }
+  .module-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--border);
+    transition: background 0.2s;
+  }
+  .module-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--red);
+    transform: translateY(-2px);
+  }
+  .module-card:hover::before { background: var(--red); }
+  .module-card.completed::before { background: var(--success); }
+  .module-num {
+    font-size: 11px; color: var(--mid-grey);
+    text-transform: uppercase; letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+  .module-card h3 {
+    font-family: var(--font-display);
+    font-size: 19px; font-weight: normal;
+    color: var(--navy); margin-bottom: 8px;
+  }
+  .module-card p { font-size: 14px; color: var(--mid-grey); line-height: 1.5; }
+  .module-status {
+    margin-top: 16px; font-size: 12px;
+    color: var(--mid-grey); display: flex; align-items: center; gap: 6px;
+  }
+  .module-status.done { color: var(--success); }
+  .status-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--light-grey);
+  }
+  .status-dot.done { background: var(--success); }
+
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .tool-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--off-white);
+  }
+  .tool-card:hover {
+    box-shadow: var(--shadow-sm);
+    border-color: var(--navy);
+    background: var(--white);
+  }
+  .tool-icon { font-size: 22px; margin-bottom: 10px; }
+  .tool-card h4 { font-size: 15px; color: var(--navy); margin-bottom: 4px; }
+  .tool-card p { font-size: 13px; color: var(--mid-grey); }
+
+  /* LESSON VIEW */
+  .lesson-layout {
+    display: flex; min-height: calc(100vh - 60px);
+  }
+  .lesson-sidebar {
+    width: 260px; flex-shrink: 0;
+    background: var(--off-white);
+    border-right: 1px solid var(--border);
+    padding: 24px 0;
+    position: sticky; top: 60px;
+    height: calc(100vh - 60px);
+    overflow-y: auto;
+  }
+  .sidebar-section-title {
+    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--mid-grey); padding: 0 20px; margin-bottom: 8px;
+    margin-top: 20px;
+  }
+  .sidebar-section-title:first-child { margin-top: 0; }
+  .sidebar-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 20px; cursor: pointer;
+    font-size: 13.5px; color: var(--dark-grey);
+    transition: all 0.15s; border-left: 2px solid transparent;
+  }
+  .sidebar-item:hover { background: var(--light-grey); color: var(--navy); }
+  .sidebar-item.active {
+    background: rgba(192,57,43,0.06);
+    border-left-color: var(--red);
+    color: var(--red); font-weight: 500;
+  }
+  .sidebar-item.completed { color: var(--success); }
+  .sidebar-check { font-size: 11px; margin-left: auto; }
+
+  .lesson-main {
+    flex: 1; padding: 48px;
+    max-width: 760px;
+  }
+  @media (max-width: 768px) {
+    .lesson-sidebar { display: none; }
+    .lesson-main { padding: 24px 20px; }
+  }
+
+  .lesson-eyebrow {
+    font-size: 11px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--red); margin-bottom: 12px;
+  }
+  .lesson-title {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: normal; color: var(--navy);
+    line-height: 1.2; margin-bottom: 8px;
+  }
+  .lesson-subtitle {
+    font-size: 17px; color: var(--mid-grey);
+    margin-bottom: 36px; line-height: 1.5;
+  }
+  .lesson-divider {
+    height: 1px; background: var(--border);
+    margin: 32px 0;
+  }
+
+  .lesson-body h2 {
+    font-family: var(--font-display);
+    font-size: 22px; font-weight: normal;
+    color: var(--navy); margin: 36px 0 14px;
+  }
+  .lesson-body h3 {
+    font-size: 16px; font-weight: 600;
+    color: var(--navy); margin: 24px 0 10px;
+  }
+  .lesson-body p { margin-bottom: 18px; line-height: 1.75; color: var(--dark-grey); }
+  .lesson-body ul, .lesson-body ol {
+    margin: 0 0 18px 20px; color: var(--dark-grey);
+  }
+  .lesson-body li { margin-bottom: 8px; line-height: 1.65; }
+  .lesson-body strong { color: var(--navy); }
+
+  .pullquote {
+    border-left: 3px solid var(--red);
+    padding: 16px 24px;
+    background: rgba(192,57,43,0.04);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin: 28px 0;
+    font-family: var(--font-display);
+    font-size: 18px; line-height: 1.55;
+    color: var(--navy); font-style: italic;
+  }
+
+  .insight-box {
+    background: var(--navy); color: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 24px 28px; margin: 28px 0;
+  }
+  .insight-box-label {
+    font-size: 10px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--red);
+    margin-bottom: 10px;
+  }
+  .insight-box p { color: rgba(255,255,255,0.8); margin-bottom: 0; }
+
+  .leon-story {
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px 28px; margin: 28px 0;
+  }
+  .leon-story-label {
+    font-size: 10px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--mid-grey);
+    margin-bottom: 10px;
+  }
+  .leon-story p { color: var(--dark-grey); margin-bottom: 0; font-style: italic; }
+
+  .lesson-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 48px; padding-top: 32px;
+    border-top: 1px solid var(--border);
+    gap: 16px;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 22px; border-radius: 6px;
+    font-size: 14px; font-weight: 500; cursor: pointer;
+    border: none; transition: all 0.2s; text-decoration: none;
+  }
+  .btn-primary {
+    background: var(--red); color: var(--white);
+  }
+  .btn-primary:hover { background: #a93226; }
+  .btn-secondary {
+    background: var(--off-white); color: var(--navy);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { background: var(--light-grey); }
+  .btn-navy {
+    background: var(--navy); color: var(--white);
+  }
+  .btn-navy:hover { background: var(--navy-light); }
+  .btn-outline {
+    background: transparent; color: var(--red);
+    border: 1px solid var(--red);
+  }
+  .btn-outline:hover { background: var(--red); color: var(--white); }
+  .btn-sm { padding: 7px 14px; font-size: 13px; }
+  .btn-complete {
+    background: var(--success); color: var(--white);
+  }
+  .btn-complete:hover { background: #219a52; }
+
+  /* TOOL VIEW */
+  .tool-view-inner { max-width: 760px; margin: 0 auto; padding: 48px 24px; }
+  .tool-header { margin-bottom: 36px; }
+  .tool-header-top {
+    display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 16px;
+    margin-bottom: 8px;
+  }
+  .tool-back {
+    background: none; border: none; cursor: pointer;
+    font-size: 13px; color: var(--mid-grey);
+    display: flex; align-items: center; gap: 6px;
+    padding: 0; transition: color 0.2s;
+  }
+  .tool-back:hover { color: var(--navy); }
+  .tool-view-title {
+    font-family: var(--font-display);
+    font-size: clamp(26px, 4vw, 36px);
+    font-weight: normal; color: var(--navy);
+  }
+  .tool-view-desc { color: var(--mid-grey); font-size: 15px; margin-top: 6px; }
+
+  /* FORM ELEMENTS */
+  .form-group { margin-bottom: 20px; }
+  .form-label {
+    display: block; font-size: 13px; font-weight: 500;
+    color: var(--navy); margin-bottom: 6px;
+  }
+  .form-label span { font-weight: normal; color: var(--mid-grey); }
+  textarea, input[type="text"], input[type="number"], select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: var(--font-body); font-size: 14px;
+    color: var(--text); background: var(--white);
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  textarea:focus, input:focus, select:focus {
+    border-color: var(--navy);
+    box-shadow: 0 0 0 3px rgba(26,26,46,0.06);
+  }
+  textarea { resize: vertical; min-height: 90px; }
+
+  .radio-group { display: flex; flex-wrap: wrap; gap: 10px; }
+  .radio-option {
+    display: flex; align-items: center; gap: 7px;
+    padding: 8px 14px; border: 1px solid var(--border);
+    border-radius: 20px; cursor: pointer;
+    font-size: 13px; color: var(--dark-grey);
+    transition: all 0.15s;
+  }
+  .radio-option input { display: none; }
+  .radio-option:hover { border-color: var(--navy); color: var(--navy); }
+  .radio-option.selected {
+    border-color: var(--red); color: var(--red);
+    background: rgba(192,57,43,0.06);
+  }
+
+  .range-group {
+    display: flex; align-items: center; gap: 14px;
+  }
+  input[type="range"] { flex: 1; accent-color: var(--red); }
+  .range-val {
+    width: 36px; text-align: center;
+    font-weight: 600; color: var(--navy);
+  }
+
+  .result-box {
+    background: var(--off-white); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px; margin: 20px 0;
+  }
+  .result-box.success { border-color: var(--success); background: rgba(39,174,96,0.05); }
+  .result-box.warning { border-color: var(--warning); background: rgba(230,126,34,0.05); }
+  .result-box.danger { border-color: var(--red); background: rgba(192,57,43,0.05); }
+
+  .history-section { margin-top: 40px; }
+  .history-title {
+    font-size: 13px; font-weight: 600; color: var(--navy);
+    margin-bottom: 12px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .history-item {
+    padding: 12px 16px; border: 1px solid var(--border);
+    border-radius: var(--radius); margin-bottom: 8px;
+    font-size: 13px; background: var(--white);
+  }
+  .history-item-date { color: var(--mid-grey); font-size: 12px; margin-bottom: 4px; }
+  .history-empty { color: var(--mid-grey); font-size: 14px; font-style: italic; }
+
+  /* IDENTITY STATEMENTS */
+  .identity-statement {
+    background: var(--navy); color: var(--white);
+    border-radius: var(--radius); padding: 14px 18px;
+    margin-bottom: 10px; font-size: 15px;
+    line-height: 1.5;
+  }
+  .identity-statement strong { color: var(--red); }
+
+  /* CHECKLIST */
+  .checklist-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+  }
+  .checklist-item:last-child { border-bottom: none; }
+  .check-box {
+    width: 22px; height: 22px; flex-shrink: 0;
+    border: 2px solid var(--border); border-radius: 4px;
+    cursor: pointer; transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 1px;
+  }
+  .check-box.checked {
+    background: var(--success); border-color: var(--success);
+    color: white; font-size: 13px;
+  }
+  .checklist-text { font-size: 14px; line-height: 1.5; flex: 1; }
+  .checklist-sub { font-size: 12px; color: var(--mid-grey); margin-top: 2px; }
+
+  /* FINANCE TOOL */
+  .finance-tier {
+    border: 1px solid var(--border); border-radius: var(--radius);
+    margin-bottom: 16px; overflow: hidden;
+  }
+  .finance-tier-header {
+    background: var(--navy); color: var(--white);
+    padding: 12px 18px; font-size: 13px; font-weight: 500;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .finance-tier-body { padding: 16px 18px; }
+  .finance-row {
+    display: flex; gap: 10px; margin-bottom: 10px;
+    align-items: center;
+  }
+  .finance-row input { flex: 1; }
+  .finance-row .finance-amount { width: 100px; flex-shrink: 0; }
+
+  .finance-summary {
+    border: 2px solid var(--navy); border-radius: var(--radius-lg);
+    padding: 24px; margin-top: 20px;
+  }
+  .finance-summary-row {
+    display: flex; justify-content: space-between;
+    padding: 8px 0; border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .finance-summary-row:last-child { border-bottom: none; }
+  .finance-summary-row.total {
+    font-weight: 700; font-size: 16px; padding-top: 12px;
+  }
+  .finance-summary-row.trading { color: var(--red); font-weight: 600; }
+
+  /* TABS */
+  .tab-bar {
+    display: flex; gap: 0; border-bottom: 2px solid var(--border);
+    margin-bottom: 28px;
+  }
+  .tab {
+    padding: 10px 20px; cursor: pointer;
+    font-size: 14px; color: var(--mid-grey);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px; transition: all 0.2s;
+  }
+  .tab:hover { color: var(--navy); }
+  .tab.active { color: var(--red); border-bottom-color: var(--red); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* UTILITY */
+  .flex { display: flex; }
+  .flex-between { display: flex; justify-content: space-between; align-items: center; }
+  .gap-8 { gap: 8px; }
+  .gap-12 { gap: 12px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-24 { margin-top: 24px; }
+  .mt-32 { margin-top: 32px; }
+  .text-sm { font-size: 13px; }
+  .text-mid { color: var(--mid-grey); }
+  .text-red { color: var(--red); }
+  .text-success { color: var(--success); }
+  .text-navy { color: var(--navy); }
+  .fw-600 { font-weight: 600; }
+  .hidden { display: none !important; }
+
+  .score-display {
+    font-family: var(--font-display);
+    font-size: 48px; color: var(--navy);
+    text-align: center; line-height: 1;
+    margin: 16px 0 8px;
+  }
+  .score-label { text-align: center; color: var(--mid-grey); font-size: 13px; }
+
+  .action-bar {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    margin-top: 24px;
+  }
+
+  /* WEEK TRACKER */
+  .week-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin: 20px 0;
+  }
+  .week-box {
+    border: 2px solid var(--border); border-radius: var(--radius);
+    padding: 16px 12px; text-align: center; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .week-box:hover { border-color: var(--navy); }
+  .week-box.active-week { border-color: var(--red); background: rgba(192,57,43,0.04); }
+  .week-box.completed-week { border-color: var(--success); background: rgba(39,174,96,0.04); }
+  .week-box-num { font-size: 20px; font-weight: 700; color: var(--navy); }
+  .week-box-label { font-size: 11px; color: var(--mid-grey); margin-top: 4px; }
+
+  .notification {
+    position: fixed; bottom: 24px; right: 24px;
+    background: var(--navy); color: var(--white);
+    padding: 14px 20px; border-radius: var(--radius);
+    font-size: 14px; box-shadow: var(--shadow-lg);
+    transform: translateY(80px); opacity: 0;
+    transition: all 0.3s; z-index: 2000;
+    max-width: 300px;
+  }
+  .notification.show { transform: translateY(0); opacity: 1; }
+  .notification.success { background: var(--success); }
+
+</style>
+</head>
+<body>
+
+<!-- NOTIFICATION -->
+<div class="notification" id="notification"></div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">Trade <span>From The Inside</span> Out</div>
+  <div class="nav-center">
+    <button class="nav-btn active" onclick="showView('home')">Home</button>
+    <button class="nav-btn" onclick="showView('lesson')">Modules</button>
+    <button class="nav-btn" onclick="showView('tools')">Tools</button>
+  </div>
+  <div class="nav-progress">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0 / 11</span>
+  </div>
+</nav>
+
+<!-- HOME VIEW -->
+<div class="view active" id="view-home">
+  <div class="home-hero">
+    <div class="home-hero-eyebrow">A Complete Self-Development Programme for Traders</div>
+    <h1>Trade <em>From</em> The Inside Out</h1>
+    <p>Most traders lose not because they lack strategy — but because the person executing the strategy hasn't been built yet. This programme changes that.</p>
+    <div class="home-hero-quote">"I was diving into the deep sea without knowing how to swim properly." — Leon</div>
+  </div>
+
+  <div class="home-content">
+    <div class="section-label">The Programme</div>
+    <div class="section-title">11 Modules. One Transformation.</div>
+    <div class="section-sub">Work through each module in order. Each builds on the last.</div>
+
+    <div class="modules-grid" id="modulesGrid"></div>
+
+    <div class="section-label">Your Tools</div>
+    <div class="section-title">10 Interactive Tools</div>
+    <div class="section-sub">Save your work in the browser. Download anytime as a text file.</div>
+
+    <div class="tools-grid" id="toolsGrid"></div>
+  </div>
+</div>
+
+<!-- LESSON VIEW -->
+<div class="view" id="view-lesson">
+  <div class="lesson-layout">
+    <div class="lesson-sidebar" id="lessonSidebar"></div>
+    <div class="lesson-main" id="lessonMain"></div>
+  </div>
+</div>
+
+<!-- TOOL VIEW -->
+<div class="view" id="view-tools">
+  <div class="tool-view-inner">
+    <div id="toolContent"></div>
+  </div>
+</div>
+
+
+<script>
+// ===================== DATA =====================
+
+const MODULES = [
+  {
+    id: 1, name: "The Mirror",
+    subtitle: "Self-awareness and the patterns that follow us everywhere",
+    icon: "🪞",
+    desc: "Before strategy comes clarity. This module is about seeing yourself honestly — your patterns, your history, your triggers.",
+    content: `
+<div class="lesson-body">
+<div class="leon-story"><div class="leon-story-label">Leon's Story — A Foreword</div><p>I've spent years wondering why I kept making the same mistakes. In trading. In business. In my personal life. I'd buy a course and feel hope. Three weeks later, I'd buy another. I told myself each one would be different. It never was. Not because the courses were bad — but because I hadn't changed the person doing the buying. I was reacting, not responding. Surviving, not thinking. And I had no idea. This programme is what I wish existed before I lost £10,000+ and years of momentum to that pattern. It starts here — with the mirror.</p></div>
+
+<h2>Why Self-Awareness Comes First</h2>
+<p>Most trading education starts with charts. This one starts with you. Not because charts don't matter — they do. But because 80% of your trading results will come from the person behind the screen, not the system on it.</p>
+<p>Michael often says: <em>"You cannot trade beyond your level of self-awareness."</em> A strategy that works for one trader will destroy another — not because the strategy is flawed, but because the second trader's patterns sabotage it before it can work.</p>
+
+<div class="pullquote">"You don't rise to the level of your goals. You fall to the level of your systems — and your systems are built by the person you currently are."</div>
+
+<h2>The Pattern Across Your Life</h2>
+<p>Before we look at trading behaviour, look at your life. Most traders discover that their trading mistakes aren't new. They're the same patterns that showed up in school, relationships, money, business — just now they're visible because trading has a scoreboard.</p>
+
+<p>Common patterns that cross over from life into trading:</p>
+<ul>
+<li><strong>Impulsive decisions under pressure</strong> — buying when excited, ignoring the plan</li>
+<li><strong>Chasing what you missed</strong> — entering late, paying too much, holding too long</li>
+<li><strong>Abandoning things before they work</strong> — changing strategy every few weeks</li>
+<li><strong>Letting emotions make financial decisions</strong> — averaging down, ignoring stop losses</li>
+<li><strong>Believing in shortcuts</strong> — signals, automation, "guaranteed" systems</li>
+</ul>
+
+<div class="insight-box"><div class="insight-box-label">Michael Says</div><p>"The market doesn't create your patterns. It reveals them. Everything you've been is on full display the moment real money is at stake. The good news? That means you can work on it."</p></div>
+
+<h2>What Survival Mode Looks Like in Trading</h2>
+<p>When we feel financial pressure, the logical brain (prefrontal cortex) goes quiet. The survival brain (amygdala) takes over. This is the state where most trading mistakes are made.</p>
+<p>Signs you're in survival mode while trading:</p>
+<ul>
+<li>You check the chart every few minutes after entering</li>
+<li>You move your stop loss to avoid being stopped out</li>
+<li>You enter a trade that isn't in your plan "just this once"</li>
+<li>You hold a losing trade hoping it comes back</li>
+<li>You overtrade after a loss to "make it back"</li>
+<li>You feel relief when a trade closes, not satisfaction</li>
+</ul>
+
+<h2>The Identity Underneath</h2>
+<p>At the core of every pattern is an identity. Not a strategy mistake — an identity that produces that mistake consistently.</p>
+<p>If you believe deep down that you're someone who "always seems to mess things up," your trading will produce evidence for that belief. Not because you're bad. Because your subconscious is always working to prove itself right.</p>
+<p>This programme doesn't just teach you what to do differently. It helps you become someone for whom doing it differently feels natural.</p>
+
+<div class="leon-story"><div class="leon-story-label">Leon Reflects</div><p>"When I finally saw that the same anxiety driving me to buy another course was driving me to overtrade after a loss — that was the moment everything changed. It wasn't a trading problem. It was a survival pattern that had followed me my whole life. Once I saw it, I couldn't unsee it."</p></div>
+
+<h2>Your First Task: The Mirror Exercise</h2>
+<p>Before moving to Module 2, take 10 minutes to write honestly about three things:</p>
+<ol>
+<li>One pattern in your life (outside trading) that you keep repeating</li>
+<li>How that same pattern has shown up in your trading</li>
+<li>What emotion drives it — fear, anxiety, excitement, shame?</li>
+</ol>
+<p>You don't need to share this with anyone. You just need to see it. That's what this module is for.</p>
+</div>`
+  },
+  {
+    id: 2, name: "The Game",
+    subtitle: "Prop firms decoded — fantasy vs professional mindset",
+    icon: "🎯",
+    desc: "Understanding what the prop firm game actually is — and how to play it like a professional, not a gambler.",
+    content: `
+<div class="lesson-body">
+<h2>What Prop Firms Actually Are</h2>
+<p>Prop firms don't fund traders out of generosity. They are businesses with a specific model: charge challenge fees, retain most traders at the challenge stage, and profit-share with the small percentage who consistently produce results.</p>
+<p>Understanding this isn't cynical — it's clarifying. You're not trying to "beat" a system. You're proving to a business that you can manage risk within defined parameters. That's a professional skill, not a gambling win.</p>
+
+<div class="insight-box"><div class="insight-box-label">The Numbers Reality</div><p>Fewer than 10% of traders pass prop firm challenges on their first attempt. Of those who pass, many fail during the funded stage due to psychology — not strategy. The challenge reveals your discipline. The funded account reveals your identity.</p></div>
+
+<h2>The Fantasy Mindset vs The Professional Mindset</h2>
+<p>Most traders approach prop firms with a fantasy mindset. Here's how to spot it — and what to replace it with:</p>
+
+<div class="result-box">
+<strong style="color:var(--red)">Fantasy Mindset:</strong>
+<ul style="margin-top:10px">
+<li>"If I can just pass this challenge, everything changes"</li>
+<li>"I need a bigger account to trade properly"</li>
+<li>"I'll be more disciplined when real money is involved"</li>
+<li>"I'll cut losses once I understand the market better"</li>
+<li>"This strategy will be the one that works"</li>
+</ul>
+</div>
+
+<div class="result-box success">
+<strong style="color:var(--success)">Professional Mindset:</strong>
+<ul style="margin-top:10px">
+<li>"I pass challenges by being consistent, not by targeting big wins"</li>
+<li>"I trade the same way regardless of account size"</li>
+<li>"My discipline is built before I apply, not after I'm funded"</li>
+<li>"I cut losses immediately. Always. No exceptions."</li>
+<li>"I master one instrument before exploring others"</li>
+</ul>
+</div>
+
+<h2>The Rules That Trip People Up</h2>
+<p>Every prop firm has rules. The most commonly violated ones are psychological traps, not technical oversights:</p>
+<ul>
+<li><strong>Daily loss limit</strong> — Breached most often after a loss, when the urge to "get it back" overrides discipline</li>
+<li><strong>Maximum drawdown</strong> — Breached by holding losing positions, not cutting them</li>
+<li><strong>Consistency rule</strong> — One huge winning day can void your entire account if it exceeds 30% of total profits</li>
+<li><strong>Minimum trading days</strong> — Skipping this in excitement to reach targets early</li>
+</ul>
+
+<div class="pullquote">"The rules don't exist to trap you. They exist to simulate how a real institutional trader would behave. If you can't follow them, you're not ready. And that's okay — readiness is what we're building."</div>
+
+<h2>The Consistency Principle</h2>
+<p>The most important word in a funded trader's vocabulary isn't "profit." It's "consistency." A trader who makes £500 for 20 consecutive days is more valuable — and more protected — than one who makes £5,000 in a day and loses it over the next week.</p>
+<p>Boring is the mechanism of wealth. The 0.5% daily target is boring. It is also the target of every successful institutional trader alive.</p>
+
+<div class="leon-story"><div class="leon-story-label">Leon's Experience</div><p>"I passed a challenge through someone else. Then failed the funded account on a consistency rule violation. The rule wasn't the problem — I didn't understand what game I was actually playing. I thought I was trying to make money. The real game was proving I could behave consistently. Once I saw that, everything about how I approach this changed."</p></div>
+
+<h2>Building Your Track Record First</h2>
+<p>The professional approach: build a verified track record on a live account — even a small one — before attempting a funded challenge. Why?</p>
+<ul>
+<li>It reveals your real psychology under live conditions</li>
+<li>It builds documented evidence of consistency</li>
+<li>It means you approach the challenge with proof, not hope</li>
+<li>It removes the financial pressure that causes most challenge failures</li>
+</ul>
+<p>Target: 20–30 documented, consistent trades. Then apply.</p>
+</div>`
+  },
+  {
+    id: 3, name: "The Brain",
+    subtitle: "Neuroscience, trigger loops and survival mode",
+    icon: "🧠",
+    desc: "Why your brain is working against you in the market — and the simple science that explains every irrational trading decision.",
+    content: `
+<div class="lesson-body">
+<h2>Your Brain Was Not Built for Trading</h2>
+<p>The human brain evolved to survive predators on a savanna — not to stay calm while a position moves against you. Understanding this isn't an excuse. It's the most practical piece of trading education you'll receive.</p>
+
+<h2>The Trigger Loop</h2>
+<p>Every impulsive trading decision follows the same four-step loop:</p>
+<ol>
+<li><strong>Trigger</strong> — A loss, a missed move, a sharp spike, a news headline</li>
+<li><strong>Interpretation</strong> — "I'm going to miss this / I need to recover this / I can't let this happen"</li>
+<li><strong>Emotional state</strong> — Anxiety, urgency, fear, FOMO, shame</li>
+<li><strong>Action</strong> — Impulsive trade, removed stop loss, oversized position</li>
+</ol>
+<p>The gap between trigger and action is where professional trading lives. Most retail traders have no gap — the trigger produces the action automatically.</p>
+
+<div class="insight-box"><div class="insight-box-label">The 90-Second Rule</div><p>Neuroscientist Dr. Jill Bolte Taylor discovered that the physiological lifespan of an emotion is 90 seconds. After that, you are choosing to maintain it. When you feel the trigger, wait 90 seconds before touching anything. This single habit changes the game.</p></div>
+
+<h2>Survival Mode — What It Feels Like</h2>
+<p>When the amygdala activates (your survival brain), the prefrontal cortex (logical thinking) loses blood flow and function. This is why you can know your rules perfectly and still break them.</p>
+<p>Physical signs you've entered survival mode while trading:</p>
+<ul>
+<li>Chest tightness or shallow breathing</li>
+<li>Sense of urgency — "I need to do something NOW"</li>
+<li>Tunnel vision on the one chart, one trade, one number</li>
+<li>Rationalising behaviour you'd normally reject</li>
+<li>Feeling like you'll regret not acting</li>
+</ul>
+
+<h2>The Proximity Trap</h2>
+<p>The closer you are to something — emotionally, financially, temporally — the less clearly you can see it. This is why:</p>
+<ul>
+<li>You can spot someone else's trading mistake immediately but not your own</li>
+<li>You make better decisions before the market opens than during it</li>
+<li>Your rules, written when calm, feel like they don't apply when you're in a trade</li>
+</ul>
+<p>The professional response: pre-commitment. Decisions made before the emotional state begins. Pre-trade checklists, written plans, rules with no exceptions.</p>
+
+<div class="pullquote">"The market doesn't move you to make bad decisions. Your nervous system does. The market just provides the trigger."</div>
+
+<h2>The Chemical Reality</h2>
+<p>A winning trade releases dopamine. The brain starts to associate risk with reward. This is why traders who get lucky early are often the most dangerous to themselves — the dopamine creates a craving for the feeling, not just the profit.</p>
+<p>A loss activates the same neural pathways as physical pain. The brain tries to avoid it by: denial (not cutting the loss), revenge (overtrading), or numbing (stepping away from everything).</p>
+<p>None of these serve the trader. All of them are automatic without self-awareness.</p>
+
+<h2>Re-Wiring the Response</h2>
+<p>The brain is plastic. Patterns can change. But change requires:</p>
+<ul>
+<li><strong>Repetition</strong> — doing the right thing, consistently, until it becomes default</li>
+<li><strong>Interruption</strong> — catching the trigger loop early enough to choose a different response</li>
+<li><strong>Identity shift</strong> — becoming someone for whom discipline is natural, not effortful</li>
+</ul>
+<p>This is what the Daily Reset tool (Tool 1) is designed for. Use it every session.</p>
+</div>`
+  },
+  {
+    id: 4, name: "The Ten Traps",
+    subtitle: "The psychological patterns that destroy funded accounts",
+    icon: "⚠️",
+    desc: "Ten specific psychological traps, named and decoded. Knowing their names is the first step to not falling into them.",
+    content: `
+<div class="lesson-body">
+<h2>Why We Name Them</h2>
+<p>You cannot fight what you cannot see. These ten traps don't feel like mistakes when you're in them — they feel like logic. Naming them creates distance. Distance creates choice.</p>
+
+<h2>Trap 1: The Urgency Trap</h2>
+<p>"I need to get in NOW or I'll miss it." The feeling that a move is about to happen and you'll be left behind. Always accompanied by a shortcut of the normal entry process. The market will always present another setup. Always.</p>
+
+<h2>Trap 2: The Reset Trap</h2>
+<p>"I just need to get back to breakeven." Using a bad trading session as a reason to stay in front of the screen longer, take more trades, and expose more capital to recover the loss. The reset trap turns a contained loss into a catastrophic one.</p>
+
+<h2>Trap 3: So Close</h2>
+<p>"I'm so close to the profit target / passing the challenge / hitting my goal." When you are close to something significant, your risk tolerance increases unconsciously. The finish line paradox: you make your most dangerous decisions with the least runway remaining.</p>
+
+<h2>Trap 4: The Finish Line Paradox</h2>
+<p>Related to So Close — but specifically the pattern of oversizing on the final trades of a challenge. "I'm 80% of the way there, I'll take a bigger position to finish faster." This is where challenges and funded accounts are blown most frequently.</p>
+
+<h2>Trap 5: The 3-Stage Breakdown</h2>
+<p>A predictable sequence: (1) Small loss — discipline holds. (2) Second loss — frustration enters. (3) Third trade — revenge trade, oversize, breaks all rules. The pattern is predictable. The interruption point is between Stage 2 and Stage 3: walk away.</p>
+
+<div class="insight-box"><div class="insight-box-label">Michael's Rule</div><p>"Two consecutive losses in a session = session over. No exceptions. Not because two losses means you're wrong. Because two losses means your emotional state is no longer neutral, and a non-neutral state produces non-neutral decisions."</p></div>
+
+<h2>Trap 6: The Simulation Illusion</h2>
+<p>Performing brilliantly on demo, then falling apart on live. Not because the strategy doesn't work — because the emotional stakes are absent in simulation. The brain learns in the state it's trained. Demo performance doesn't predict live performance unless emotional management has been trained live.</p>
+
+<h2>Trap 7: Financial Pressure Trading</h2>
+<p>Trading to pay rent, cover debt, or fund lifestyle needs. This is perhaps the most dangerous state a trader can be in. Financial desperation removes objectivity entirely. The market becomes a tool of survival, and survival mode is the opposite of the state needed to trade well.</p>
+
+<h2>Trap 8: Identity Debt</h2>
+<p>"I've told people I'm a trader. I can't admit this isn't working." The gap between the identity you've presented to the world and your actual results creates pressure to perform for an audience — which destroys honest self-assessment.</p>
+
+<h2>Trap 9: The Completion Loop</h2>
+<p>Staying in a bad trade, bad programme, or bad strategy because you've invested so much already. Sunk cost thinking in trading: the past investment is irrelevant to the current decision. Only the current risk/reward matters.</p>
+
+<h2>Trap 10: Edge Expiration</h2>
+<p>Continuing to trade a strategy that once worked but no longer does — because the identity is now attached to it. "This worked for me before" is not a risk management strategy. Edges expire. Professionals adapt.</p>
+
+<div class="leon-story"><div class="leon-story-label">Leon Reflects</div><p>"I've lived through all ten of these. The Reset Trap and Financial Pressure Trading hit me simultaneously after losing the funded account. I was trying to trade my way out of a financial emergency. That state doesn't produce good trading. It produces desperate trading. And desperate trading produces losses. I know that now."</p></div>
+
+<h2>The Naming Practice</h2>
+<p>When you feel an impulse in a session, before acting, ask: "Which trap is this?" Often, just naming it breaks the loop. The impulse depends on you not seeing it clearly.</p>
+</div>`
+  },
+  {
+    id: 5, name: "The Psychology",
+    subtitle: "Limiting beliefs, identity, shame and confidence",
+    icon: "💭",
+    desc: "The belief system running underneath your trading behaviour — and how to rebuild it from the ground up.",
+    content: `
+<div class="lesson-body">
+<h2>What Runs Underneath</h2>
+<p>Strategy is visible. The belief system underneath it is invisible — but far more powerful. Most traders work endlessly on their strategy and never examine what they actually believe about themselves, money, and success. This module goes underneath.</p>
+
+<h2>Limiting Beliefs in Trading</h2>
+<p>A limiting belief is any thought that, if believed, would produce the behaviour that leads to failure. The insidious part: they don't feel like beliefs. They feel like facts.</p>
+
+<p>Common limiting beliefs in traders:</p>
+<ul>
+<li>"I'm not good enough to be a funded trader"</li>
+<li>"Trading consistently is for other people, not me"</li>
+<li>"I always seem to mess things up at the last minute"</li>
+<li>"Money has always been a struggle in my family"</li>
+<li>"I need signals / mentorship / a better strategy to succeed"</li>
+<li>"I don't deserve to be financially free"</li>
+</ul>
+
+<div class="pullquote">"Your beliefs about money were formed before you understood money. You absorbed them from family, experience, culture. They are not true. They are just old. And old beliefs can be replaced with intentional ones."</div>
+
+<h2>The Identity Question</h2>
+<p>James Clear writes: "Every action you take is a vote for the type of person you wish to become." But before you can vote for a new identity, you have to know what you're currently voting for.</p>
+<p>Ask yourself: What kind of trader am I currently being (not trying to be — being)? What does the evidence of the last 30 trading sessions say about who I am?</p>
+<p>That answer is your current identity. Not your desired identity. Your actual one.</p>
+<p>The work is to close the gap — not by trying harder, but by making consistent small choices that gradually cast a different vote.</p>
+
+<h2>Shame vs Guilt</h2>
+<p>This distinction changes how you respond to mistakes:</p>
+<ul>
+<li><strong>Guilt:</strong> "I did something bad." Process it, learn from it, move on. Guilt is healthy — it says the action was wrong, not the person.</li>
+<li><strong>Shame:</strong> "I am bad." Shame loops — it produces the behaviours you're ashamed of, which produce more shame. Shame hides. It doesn't learn.</li>
+</ul>
+<p>When you blow a trade or a challenge, notice the story you tell yourself. "I made a mistake" vs "I am a failure." Only one of those is learnable from.</p>
+
+<div class="insight-box"><div class="insight-box-label">The Research</div><p>Brené Brown's research shows that shame is correlated with addiction, depression, and self-destructive behaviour — while guilt is correlated with empathy and growth. Trading through shame produces more of the same. Trading through guilt produces learning.</p></div>
+
+<h2>Confidence vs Ego</h2>
+<p>Confidence and ego look similar from the outside but produce opposite results under pressure:</p>
+<ul>
+<li><strong>Confidence</strong> says: "I have a good process. I trust it. I'll follow it even when it's uncomfortable."</li>
+<li><strong>Ego</strong> says: "I know better than my rules. I know better than the setup. I know better than the market."</li>
+</ul>
+<p>Confidence allows you to take a loss cleanly because you know the loss was within the process. Ego cannot accept a loss because the loss contradicts the belief in being right.</p>
+
+<h2>Building the New Identity</h2>
+<p>Identity change happens through consistent micro-actions, not breakthrough moments. Each time you:</p>
+<ul>
+<li>Follow your pre-trade checklist</li>
+<li>Cut a loss at your stop</li>
+<li>Walk away after two consecutive losses</li>
+<li>Wait for confirmation instead of entering early</li>
+<li>Journal the trade honestly</li>
+</ul>
+<p>...you cast a vote for the professional trader identity. Over 20–30 trades, those votes accumulate into a new normal. Use Tool 7 (Limiting Beliefs Reframer) to begin this process now.</p>
+</div>`
+  },
+  {
+    id: 6, name: "The Toolkit",
+    subtitle: "90-second brake, morning protocol, circuit breakers",
+    icon: "🧰",
+    desc: "The practical tools that sit between your emotional trigger and your trading action. These are what keep you in the game.",
+    content: `
+<div class="lesson-body">
+<h2>Tools Are Not Enough. But They're Essential.</h2>
+<p>Belief work without practical tools is philosophy. Practical tools without belief work is willpower — and willpower runs out. The combination is what creates durable change.</p>
+<p>This module gives you four tools that professional traders use — not as optional extras, but as non-negotiable operating procedures.</p>
+
+<h2>Tool 1: The 90-Second Brake</h2>
+<p>When you feel an impulse — urgency, FOMO, revenge — set a timer for 90 seconds. Don't touch anything. Breathe slowly. The impulse is physiological. It will pass in 90 seconds if you don't feed it.</p>
+<p>After 90 seconds, ask: "Is this trade in my plan?" If yes, proceed. If no, close the chart and make a note of what happened.</p>
+<p>This is not about suppressing emotion. It's about not letting emotion make financial decisions.</p>
+
+<div class="insight-box"><div class="insight-box-label">One Deep Breath</div><p>Before every trade entry. Before every session open. After every loss. One full, deliberate breath. Not as a ritual — as a physiological reset. The breath activates the parasympathetic nervous system and reduces cortisol within seconds.</p></div>
+
+<h2>Tool 2: The Morning Protocol</h2>
+<p>Professional traders don't open charts randomly. They open with a prepared state of mind. Build a pre-session routine that includes:</p>
+<ol>
+<li><strong>Macro context</strong> — What's the economic story today? What events are on the calendar?</li>
+<li><strong>DXY direction</strong> — Which way is the dollar leaning?</li>
+<li><strong>Key levels</strong> — Where are the significant support/resistance zones?</li>
+<li><strong>Bias check</strong> — What is the higher timeframe telling me?</li>
+<li><strong>Emotional check-in</strong> — How am I feeling? Am I in a state to trade?</li>
+<li><strong>Rules reminder</strong> — Read your non-negotiables before the session begins</li>
+</ol>
+<p>This routine puts you in the seat as a professional, not a participant.</p>
+
+<h2>Tool 3: The Circuit Breakers</h2>
+<p>Pre-set rules that trigger an automatic session stop — regardless of what you feel in the moment:</p>
+<ul>
+<li><strong>Two consecutive losses</strong> = Session over for the day</li>
+<li><strong>Daily loss limit reached</strong> = Platform closed, no exceptions</li>
+<li><strong>Emotional state compromised</strong> = No trade, journal instead</li>
+<li><strong>No clear setup</strong> = No trade (boredom is not a reason to trade)</li>
+<li><strong>Major news in next 15 minutes</strong> = Wait or no trade</li>
+</ul>
+<p>Circuit breakers only work if they are non-negotiable. The moment you make one "just this once" exception, the circuit breaker no longer exists.</p>
+
+<h2>Tool 4: The Pre-Commitment Sheet</h2>
+<p>Written before the session. Not during. Contains:</p>
+<ul>
+<li>Today's instrument and direction bias</li>
+<li>Key levels I'm watching</li>
+<li>Maximum number of trades for the session</li>
+<li>Maximum loss I will accept today</li>
+<li>What I will do if that loss is reached</li>
+</ul>
+<p>The pre-commitment sheet is the contract you make with yourself before the emotional state begins. It is the only document that should govern your behaviour during the session.</p>
+
+<div class="leon-story"><div class="leon-story-label">Why These Work</div><p>"I used to think routines and checklists were for people who couldn't trust themselves. I realise now that's exactly why they work. You can't trust your in-session self when emotions are running. Your pre-session self is the one you want making decisions. These tools let your calm, rational self govern your sessions."</p></div>
+</div>`
+  },
+  {
+    id: 7, name: "The Decisions",
+    subtitle: "Pre-trade checklist, decision journal, growth mindset",
+    icon: "✅",
+    desc: "How to make decisions like a professional — before the trade, during it, and in reflection after.",
+    content: `
+<div class="lesson-body">
+<h2>Most Trading Decisions Are Not Decisions</h2>
+<p>They are reactions. The price moves, the emotion fires, the action follows. No space. No process. No professional standard.</p>
+<p>This module installs a decision framework that converts reactions into decisions. It takes practice — but it starts with awareness that the difference exists.</p>
+
+<h2>The Pre-Trade Checklist</h2>
+<p>Before entering any trade, a professional can answer these six questions clearly:</p>
+<ol>
+<li><strong>Why this level?</strong> — What makes this support/resistance zone significant on the higher timeframe?</li>
+<li><strong>What's the macro context?</strong> — Is this trade aligned with the current economic narrative?</li>
+<li><strong>Where is my stop?</strong> — Exact level, not approximate. If you don't know, you don't trade.</li>
+<li><strong>Where is my target?</strong> — Minimum 3:1 risk-to-reward. If it isn't there, the setup doesn't qualify.</li>
+<li><strong>Am I in a neutral emotional state?</strong> — Yes/No. If No, you don't trade.</li>
+<li><strong>Is this in my plan?</strong> — If it requires bending a rule, the answer is No.</li>
+</ol>
+<p>If any answer is unclear or No — the trade does not happen. This is not a flexible process. The moment flexibility enters, the checklist becomes useless.</p>
+
+<h2>Survival First</h2>
+<p>Before profit. Before growth. Before funded accounts. Before anything. Your ability to continue trading depends on your ability to not blow up. One catastrophic loss removes all future opportunities.</p>
+<p>The professional hierarchy:</p>
+<ol>
+<li><strong>Protect capital</strong> — Always. No exceptions.</li>
+<li><strong>Follow the process</strong> — Consistent execution regardless of outcome.</li>
+<li><strong>Allow profit to appear</strong> — It follows from 1 and 2.</li>
+</ol>
+<p>Most losing traders invert this: they chase profit first, protect capital when they feel like it, and follow a process only when it's convenient.</p>
+
+<div class="pullquote">"Your job is not to make money. Your job is to execute the process with precision. Money is what happens when you do that consistently."</div>
+
+<h2>The Decision Journal</h2>
+<p>Not a trading journal. A decision journal. The difference matters.</p>
+<p>A trading journal records what happened. A decision journal records why you decided what you decided — before, during, and after the trade.</p>
+<p>Three entries per trade:</p>
+<ul>
+<li><strong>Before:</strong> What is the setup? What is my emotional state? What do I expect?</li>
+<li><strong>During:</strong> What did I feel when it moved against me? Did I adjust the plan? Why?</li>
+<li><strong>After:</strong> What actually happened? How close was my decision quality to my plan? What's my process score (1-10)?</li>
+</ul>
+<p>The goal isn't a perfect score. The goal is an honest score — because honesty is where learning begins.</p>
+
+<h2>The Growth Mindset Reframe</h2>
+<p>Fixed mindset: "I failed the challenge. I'm not good enough." This closes the loop and produces shame.</p>
+<p>Growth mindset: "I failed the challenge. What specific decision point can I trace this failure to? What will I do differently?" This opens the loop and produces learning.</p>
+<p>Every failed challenge contains the data for passing the next one — but only if you're willing to look at the data honestly rather than emotionally.</p>
+
+<div class="insight-box"><div class="insight-box-label">The One Question</div><p>"If a professional trader reviewed my last 10 trades, what pattern would they identify?" Ask this after every 10 trades. Not what trades went wrong — what pattern in your decision-making produced those results. The pattern is what you work on.</p></div>
+</div>`
+  },
+  {
+    id: 8, name: "Life Standards",
+    subtitle: "Non-negotiables, habits, environment and who you're becoming",
+    icon: "🏗️",
+    desc: "Trading is a reflection of your life. This module builds the foundation that trading sits on — not the other way around.",
+    content: `
+<div class="lesson-body">
+<h2>The Life You're Trading From</h2>
+<p>You don't leave your life at the door when you sit down to trade. The sleep you got, the argument you had, the financial anxiety you're carrying, the food you ate — all of it walks into that session with you.</p>
+<p>Traders who are serious about performance take their life standards seriously. Not as self-improvement for its own sake — as infrastructure for consistent trading.</p>
+
+<h2>Non-Negotiables</h2>
+<p>A non-negotiable is a standard you hold regardless of how you feel. Not a goal. Not a target. A floor below which you do not go, no matter what.</p>
+<p>Examples of trading-relevant non-negotiables:</p>
+<ul>
+<li>Sleep — minimum hours, consistent schedule</li>
+<li>Morning routine — completed before charts open</li>
+<li>Physical activity — non-optional, not contingent on mood</li>
+<li>Financial clarity — bills reviewed and covered before any trading</li>
+<li>No trading under emotional duress — argument, crisis, anxiety</li>
+</ul>
+
+<h2>The Habits to Give Up</h2>
+<p>Growth isn't only about what you add — it's about what you remove. Habits that directly impair trading performance:</p>
+<ul>
+<li><strong>Doom-scrolling financial news</strong> — It creates urgency without signal</li>
+<li><strong>Following signal providers</strong> — It outsources your edge and builds dependency</li>
+<li><strong>Comparing your results to others'</strong> — Social media trading is a performance, not evidence</li>
+<li><strong>Buying courses under pressure</strong> — Emotional state drives the purchase; the course rarely changes the underlying pattern</li>
+<li><strong>Overtrading boredom</strong> — Waiting is active. Doing nothing is sometimes the highest-performance action.</li>
+</ul>
+
+<h2>Intentions vs Goals</h2>
+<p>Goals are outcomes you want. Intentions are the person you're committed to being in order to achieve them.</p>
+<ul>
+<li><strong>Goal:</strong> "Pass the FTMO challenge in 6 months"</li>
+<li><strong>Intention:</strong> "I am a disciplined professional who cuts losses immediately and follows the plan without exception"</li>
+</ul>
+<p>The intention produces the goal. Working backwards from the goal without building the intention is wishful thinking.</p>
+
+<div class="pullquote">"You don't get what you want. You get what you are. Become the trader first. The results follow the person."</div>
+
+<h2>Environment Design</h2>
+<p>Your environment shapes your behaviour more than your willpower does. Professional traders design their environment for discipline:</p>
+<ul>
+<li>Clean, dedicated trading space — no clutter, no distractions</li>
+<li>Phone in another room during sessions</li>
+<li>Charts set up before the session — no rushing</li>
+<li>Journal open and ready — not optional, part of the workspace</li>
+<li>Circuit breakers visible — written rules in front of you</li>
+</ul>
+
+<div class="leon-story"><div class="leon-story-label">Leon's Shift</div><p>"I used to trade from the sofa, phone next to me, no plan, no structure. Then wonder why I couldn't be consistent. The environment was telling my brain this wasn't serious. When I treated the trading session as a professional appointment — proper space, prepared, focused — everything about how I showed up changed."</p></div>
+</div>`
+  },
+  {
+    id: 9, name: "The Finance Foundation",
+    subtitle: "Priority tiers, the 48-hour rule and trading from strength",
+    icon: "💰",
+    desc: "The financial structure that removes desperation from trading. Bills first. Trading budget from what remains. Always.",
+    content: `
+<div class="lesson-body">
+<h2>Why Finance Comes Before Trading</h2>
+<p>Financial desperation is the single most common root cause of trading failure. When you need the trading account to pay rent, you are no longer trading — you are gambling with your survival needs. No strategy survives that state.</p>
+<p>This module builds the financial infrastructure that makes trading from a neutral, professional state possible.</p>
+
+<h2>The Priority Tier System</h2>
+<p>Every pound that comes in gets categorised before any trading decision is made:</p>
+
+<div class="result-box">
+<strong>Tier 1 — Survival (non-negotiable)</strong>
+<ul style="margin-top:10px">
+<li>Rent / mortgage</li>
+<li>Food and essentials</li>
+<li>Utility bills</li>
+<li>Transport</li>
+</ul>
+</div>
+
+<div class="result-box" style="border-color:var(--warning);background:rgba(230,126,34,0.05)">
+<strong>Tier 2 — Commitments (cover these next)</strong>
+<ul style="margin-top:10px">
+<li>Debt repayments</li>
+<li>Subscriptions and services you use</li>
+<li>Phone / insurance</li>
+</ul>
+</div>
+
+<div class="result-box success">
+<strong>Tier 3 — Growth and Trading (only from what remains)</strong>
+<ul style="margin-top:10px">
+<li>Savings</li>
+<li>Trading capital — only from genuinely disposable income</li>
+<li>Education investment</li>
+</ul>
+</div>
+
+<p>The rule is absolute: trading capital comes from Tier 3 only. If Tier 1 and 2 are not covered, there is no Tier 3. Use Tool 2 (Finance Priority Tracker) to map this out clearly.</p>
+
+<h2>The 48-Hour Rule</h2>
+<p>No financial decision over £50 without 48 hours of consideration. No exceptions.</p>
+<p>Why 48 hours? Because emotional urgency — the feeling that you need to decide NOW — almost always dissipates within 48 hours. If the decision still makes sense after 48 hours, it's likely a rational one. If it no longer makes sense, you've just saved yourself from a reactive purchase.</p>
+
+<div class="insight-box"><div class="insight-box-label">The Pattern Behind Impulsive Purchases</div><p>The core fear driving impulsive financial decisions: "This is all there is — if I miss this opportunity it's gone forever." This creates false urgency. Logic shuts down. You buy relief from the anxiety, not the product being sold. Recognise this pattern in yourself. It appears in trading and in purchases alike.</p></div>
+
+<h2>Before Any New Purchase or Investment</h2>
+<p>Ask these questions before committing to any course, programme, tool, or trading-related purchase:</p>
+<ul>
+<li>Can I see independently verified results from multiple real users?</li>
+<li>What are the refund terms, in writing?</li>
+<li>Have I been given 48 hours to decide without pressure?</li>
+<li>Do I have full details of what I'm buying before committing?</li>
+<li>Is there pressure for an immediate decision? (If yes — automatic red flag, walk away)</li>
+</ul>
+
+<h2>Trading Budget Only From Surplus</h2>
+<p>The target: your trading account feels like an investment, not a lifeline. When you deposit money you genuinely cannot afford to lose, every trade becomes a survival decision. That state destroys objectivity.</p>
+<p>Build income stability first. Trade from surplus. This isn't a luxury — it's a prerequisite for professional performance.</p>
+</div>`
+  },
+  {
+    id: 10, name: "After The Payout",
+    subtitle: "Identity reintegration and the 4-week recovery protocol",
+    icon: "🔄",
+    desc: "What happens after you blow a funded account — and the structured path back. Three patterns, four weeks, one mission.",
+    content: `
+<div class="lesson-body">
+<h2>What Nobody Talks About</h2>
+<p>Everyone talks about passing the challenge. Almost no one talks about what happens when you blow the funded account. And yet — this is the experience of the majority of funded traders at least once. Ignoring it doesn't prepare you for it. This module does.</p>
+
+<h2>The Three Post-Blow Patterns</h2>
+<p>After losing a funded account, traders typically fall into one of three patterns:</p>
+
+<h3>Pattern 1: Immediate Re-entry</h3>
+<p>"I'll just do another challenge straight away and do it right this time." This is the reset trap applied to the entire funded account experience. The emotional state that caused the blow-up hasn't resolved — it's now combined with financial loss and ego damage. Re-entering immediately is almost always a mistake.</p>
+
+<h3>Pattern 2: Complete Withdrawal</h3>
+<p>"I'm done with trading. It doesn't work for me." A shutdown response. The shame is too great to analyse, so the entire experience gets abandoned. The pattern that caused the failure remains unexamined — which means it will appear elsewhere.</p>
+
+<h3>Pattern 3: The Professional Response</h3>
+<p>Stop. Reflect. Analyse exactly what happened — not emotionally, factually. Identify the specific decision point that caused the failure. Take deliberate time away. Return with a concrete change to the process, not just renewed determination.</p>
+
+<div class="pullquote">"Resilience in trading isn't getting back up immediately. It's taking long enough to understand why you fell before you stand again."</div>
+
+<h2>Identity Reintegration</h2>
+<p>When you've identified heavily as a funded trader, losing the account can feel like losing yourself. This is identity debt — when your sense of self is attached to a trading result.</p>
+<p>The reintegration process requires separating who you are from what your account says. You are not your drawdown. You are not your last trade. You are a professional in development, and development includes setbacks.</p>
+
+<h2>The 4-Week Recovery Protocol</h2>
+
+<h3>Week 1: Full Stop</h3>
+<p>No trading. No charts. No planning. Journal what happened — factually, not emotionally. Write the specific decision points that led to the failure. Rest. Let the nervous system regulate.</p>
+
+<h3>Week 2: Analysis and Responsibility</h3>
+<p>Without self-blame: identify the exact pattern that caused the failure. Which of the Ten Traps? Which limiting belief was operating? What would a professional have done differently? Write a single paragraph that completes this sentence: "I blew the account because I consistently chose to __________ when I felt __________."</p>
+
+<h3>Week 3: Demo Return</h3>
+<p>Return to demo. Not to prove anything — to rebuild the pattern correctly. Focus only on the specific area that caused the failure. One setup. Clean execution. Journalling every trade.</p>
+
+<h3>Week 4: Process Assessment</h3>
+<p>Review the demo trades. Is the change embedded? Is the decision point that caused the failure now handled differently? If yes: consider a new live account with a smaller balance. If no: another week on demo. No rushing. Readiness is the only criterion.</p>
+
+<div class="leon-story"><div class="leon-story-label">Leon's Experience</div><p>"After failing my funded account on a consistency rule violation, I went straight back into demo. I didn't take time to understand what had actually happened. Weeks later, I was still making the same decisions. The protocol in this module is what I needed then. Stop first. Understand second. Return third."</p></div>
+</div>`
+  },
+  {
+    id: 11, name: "The Daily Practice",
+    subtitle: "Daily reset, the three Cs and the Sunday review",
+    icon: "📅",
+    desc: "The daily and weekly rituals that make the entire programme live and breathe — not just a course you completed.",
+    content: `
+<div class="lesson-body">
+<h2>Programmes Don't Change People. Practices Do.</h2>
+<p>You can read every module in this course and understand everything intellectually. That won't change anything. What changes you is daily practice — the consistent application of these principles across hundreds of sessions, hundreds of decisions, hundreds of small moments of choosing discipline over impulse.</p>
+<p>This module is the one you return to every day.</p>
+
+<h2>The Daily Reset</h2>
+<p>Before every trading session. Without exception. Six steps:</p>
+<ol>
+<li><strong>State your identity</strong> — Read your identity statements aloud. Not in your head. Aloud.</li>
+<li><strong>Check your emotional baseline</strong> — On a scale of 1-10, how neutral am I right now? If below 6, no trading today.</li>
+<li><strong>Complete the pre-session checklist</strong> — Macro context, DXY, key levels, bias.</li>
+<li><strong>Set today's parameters</strong> — Maximum trades, maximum loss, target.</li>
+<li><strong>Read your circuit breakers</strong> — The non-negotiable stops that govern the session.</li>
+<li><strong>One deep breath</strong> — Then open the platform.</li>
+</ol>
+
+<h2>The Three Cs</h2>
+<p>The three Cs are the daily measure of professional performance. Not profit. Not pips. These three:</p>
+<ul>
+<li><strong>Calm</strong> — Did I enter and exit sessions in a regulated emotional state?</li>
+<li><strong>Consistent</strong> — Did I follow the same process regardless of outcome?</li>
+<li><strong>Committed</strong> — Did I honour the non-negotiables without exception?</li>
+</ul>
+<p>A session where you lose money but score 3/3 on the Three Cs is a professional session. A session where you make money but score 0/3 is a dangerous one — it teaches the wrong lesson.</p>
+
+<div class="insight-box"><div class="insight-box-label">Michael's Measure</div><p>"I don't ask traders how much they made this week. I ask them how many times they followed their process. The money follows the process. Always measure what you can control."</p></div>
+
+<h2>The Professional Mindset Table</h2>
+<div class="result-box">
+<table style="width:100%;font-size:13px;border-collapse:collapse">
+<tr style="background:var(--navy);color:white">
+<th style="padding:10px;text-align:left">Amateur</th>
+<th style="padding:10px;text-align:left">Professional</th>
+</tr>
+<tr style="border-bottom:1px solid var(--border)">
+<td style="padding:10px">Trades to make money</td>
+<td style="padding:10px">Trades to execute the process</td>
+</tr>
+<tr style="border-bottom:1px solid var(--border);background:var(--off-white)">
+<td style="padding:10px">Measures success in pips</td>
+<td style="padding:10px">Measures success in process adherence</td>
+</tr>
+<tr style="border-bottom:1px solid var(--border)">
+<td style="padding:10px">Changes strategy when it loses</td>
+<td style="padding:10px">Trusts the process through drawdown</td>
+</tr>
+<tr style="border-bottom:1px solid var(--border);background:var(--off-white)">
+<td style="padding:10px">Moves stop losses</td>
+<td style="padding:10px">Respects stop losses as non-negotiable</td>
+</tr>
+<tr style="border-bottom:1px solid var(--border)">
+<td style="padding:10px">Reviews P&L daily</td>
+<td style="padding:10px">Reviews process quality daily</td>
+</tr>
+<tr style="background:var(--off-white)">
+<td style="padding:10px">Needs motivation to trade consistently</td>
+<td style="padding:10px">Has systems that make consistency automatic</td>
+</tr>
+</table>
+</div>
+
+<h2>The Sunday Review</h2>
+<p>Once per week, before the next trading week begins, 20 minutes with your journal:</p>
+<ul>
+<li>What was the pattern in my best session this week?</li>
+<li>What was the pattern in my worst session?</li>
+<li>Where did I follow the process? Where did I deviate?</li>
+<li>What is one specific thing I will do differently next week?</li>
+<li>What is my process score for the week (not my P&L score)?</li>
+</ul>
+<p>The Sunday Review is where insights from the week consolidate into permanent change. Without it, you repeat the week's patterns endlessly.</p>
+
+<div class="pullquote">"This isn't a course you complete. It's a practice you return to. The trader you become is built one session at a time, one decision at a time, one honest reflection at a time."</div>
+</div>`
+  }
+];
+
+
+const TOOLS = [
+  {
+    id: 1, name: "Daily Reset",
+    icon: "🌅",
+    desc: "Six identity statements, pre-session checklist and emotion tag",
+    render: () => `
+<div>
+<div class="tool-header">
+  <button class="tool-back" onclick="showToolList()">← All Tools</button>
+  <div class="tool-header-top">
+    <div>
+      <div class="tool-view-title">Daily Reset</div>
+      <div class="tool-view-desc">Complete this before every session. Without exception.</div>
+    </div>
+  </div>
+</div>
+
+<div class="identity-statement"><strong>I am</strong> a disciplined professional who follows the process regardless of outcome.</div>
+<div class="identity-statement"><strong>I am</strong> someone who cuts losses immediately. My stop loss is non-negotiable.</div>
+<div class="identity-statement"><strong>I am</strong> calm and patient. I wait for confirmation before entering.</div>
+<div class="identity-statement"><strong>I am</strong> building a track record through consistency, not through winning big.</div>
+<div class="identity-statement"><strong>I am</strong> trading from strength, not from desperation. My bills are covered.</div>
+<div class="identity-statement"><strong>I am</strong> a professional in development. Every session is practice, not proof.</div>
+
+<div class="lesson-divider"></div>
+
+<div class="form-group">
+  <div class="form-label">Emotional baseline right now <span>(1 = chaotic, 10 = fully neutral)</span></div>
+  <div class="range-group">
+    <input type="range" min="1" max="10" value="7" id="emotionScore" oninput="document.getElementById('emotionVal').textContent=this.value">
+    <div class="range-val" id="emotionVal">7</div>
+  </div>
+  <div class="text-sm text-mid mt-16" id="emotionWarning"></div>
+</div>
+
+<div class="form-label" style="margin-bottom:12px">Pre-session checklist</div>
+<div id="dailyChecklist">
+  <div class="checklist-item">
+    <div class="check-box" onclick="toggleCheck(this)"></div>
+    <div class="checklist-text">Macro context checked<div class="checklist-sub">What's the economic story? Any major news today?</div></div>
+  </div>
+  <div class="checklist-item">
+    <div class="check-box" onclick="toggleCheck(this)"></div>
+    <div class="checklist-text">DXY direction noted<div class="checklist-sub">Dollar up = gold under pressure. Dollar down = gold supported.</div></div>
+  </div>
+  <div class="checklist-item">
+    <div class="check-box" onclick="toggleCheck(this)"></div>
+    <div class="checklist-text">Key levels identified on 1H chart<div class="checklist-sub">Where are the institutional support zones?</div></div>
+  </div>
+  <div class="checklist-item">
+    <div class="check-box" onclick="toggleCheck(this)"></div>
+    <div class="checklist-text">Higher timeframe bias confirmed<div class="checklist-sub">Weekly and daily candle direction reviewed</div></div>
+  </div>
+  <div class="checklist-item">
+    <div class="check-box" onclick="toggleCheck(this)"></div>
+    <div class="checklist-text">Bills covered — trading from surplus<div class="checklist-sub">No financial desperation in this session</div></div>
+  </div>
+  <div class="checklist-item">
+    <div class="check-box" onclick="toggleCheck(this)"></div>
+    <div class="checklist-text">Circuit breakers reviewed<div class="checklist-sub">Two losses = session over. Daily limit = platform closed.</div></div>
+  </div>
+</div>
+
+<div class="form-group mt-24">
+  <div class="form-label">Emotion tag for today's session</div>
+  <div class="radio-group" id="emotionTag">
+    <label class="radio-option" onclick="selectRadio(this,'emotionTag')"><input type="radio" name="emotionTag" value="Calm and ready">Calm and ready</label>
+    <label class="radio-option" onclick="selectRadio(this,'emotionTag')"><input type="radio" name="emotionTag" value="Slightly anxious">Slightly anxious</label>
+    <label class="radio-option" onclick="selectRadio(this,'emotionTag')"><input type="radio" name="emotionTag" value="Neutral">Neutral</label>
+    <label class="radio-option" onclick="selectRadio(this,'emotionTag')"><input type="radio" name="emotionTag" value="Distracted">Distracted</label>
+    <label class="radio-option" onclick="selectRadio(this,'emotionTag')"><input type="radio" name="emotionTag" value="Determined">Determined</label>
+    <label class="radio-option" onclick="selectRadio(this,'emotionTag')"><input type="radio" name="emotionTag" value="No trade today">No trade today</label>
+  </div>
+</div>
+
+<div class="form-group">
+  <div class="form-label">Any notes before the session</div>
+  <textarea id="dailyNotes" placeholder="What's on your mind? What are you watching today?"></textarea>
+</div>
+
+<div class="action-bar">
+  <button class="btn btn-primary" onclick="saveDailyReset()">Save This Session</button>
+  <button class="btn btn-secondary" onclick="downloadDailyReset()">Download .txt</button>
+</div>
+
+<div class="history-section">
+  <div class="history-title">Session History</div>
+  <div id="dailyHistory"></div>
+</div>
+</div>`
+  },
+  {
+    id: 2, name: "Finance Priority Tracker",
+    icon: "💳",
+    desc: "Map your income, cover bills first, see your real trading budget",
+    render: () => `
+<div>
+<div class="tool-header">
+  <button class="tool-back" onclick="showToolList()">← All Tools</button>
+  <div class="tool-header-top">
+    <div>
+      <div class="tool-view-title">Finance Priority Tracker</div>
+      <div class="tool-view-desc">Bills first. Trading capital from what remains. Always.</div>
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  <div class="form-label">Monthly income (after tax) £</div>
+  <input type="number" id="monthlyIncome" placeholder="e.g. 2000" oninput="calcFinance()">
+</div>
+
+<div class="finance-tier">
+  <div class="finance-tier-header"><span>Tier 1 — Survival</span><span id="tier1Total">£0</span></div>
+  <div class="finance-tier-body" id="tier1Items">
+    <div class="finance-row"><input type="text" placeholder="Item (e.g. Rent)" oninput="calcFinance()"><input type="number" class="finance-amount" placeholder="£" oninput="calcFinance()"></div>
+    <div class="finance-row"><input type="text" placeholder="Item" oninput="calcFinance()"><input type="number" class="finance-amount" placeholder="£" oninput="calcFinance()"></div>
+    <div class="finance-row"><input type="text" placeholder="Item" oninput="calcFinance()"><input type="number" class="finance-amount" placeholder="£" oninput="calcFinance()"></div>
+  </div>
+  <div style="padding:8px 18px 12px"><button class="btn btn-secondary btn-sm" onclick="addTierRow('tier1Items')">+ Add item</button></div>
+</div>
+
+<div class="finance-tier">
+  <div class="finance-tier-header"><span>Tier 2 — Commitments</span><span id="tier2Total">£0</span></div>
+  <div class="finance-tier-body" id="tier2Items">
+    <div class="finance-row"><input type="text" placeholder="Item (e.g. Phone bill)" oninput="calcFinance()"><input type="number" class="finance-amount" placeholder="£" oninput="calcFinance()"></div>
+    <div class="finance-row"><input type="text" placeholder="Item" oninput="calcFinance()"><input type="number" class="finance-amount" placeholder="£" oninput="calcFinance()"></div>
+  </div>
+  <div style="padding:8px 18px 12px"><button class="btn btn-secondary btn-sm" onclick="addTierRow('tier2Items')">+ Add item</button></div>
+</div>
+
+<div class="finance-summary" id="financeSummary">
+  <div class="finance-summary-row"><span>Monthly income</span><span id="sumIncome">£0</span></div>
+  <div class="finance-summary-row"><span>Tier 1 — Survival costs</span><span id="sumT1">−£0</span></div>
+  <div class="finance-summary-row"><span>Tier 2 — Commitments</span><span id="sumT2">−£0</span></div>
+  <div class="finance-summary-row total"><span>Remaining (Tier 3)</span><span id="sumRemaining">£0</span></div>
+  <div class="finance-summary-row trading" id="tradingBudgetRow"><span>Max trading budget</span><span id="tradingBudget">£0</span></div>
+</div>
+
+<div id="financeWarning" class="mt-24"></div>
+
+<div class="action-bar mt-24">
+  <button class="btn btn-primary" onclick="saveFinance()">Save Budget</button>
+  <button class="btn btn-secondary" onclick="downloadFinance()">Download .txt</button>
+</div>
+</div>`
+  },
+  {
+    id: 3, name: "Pre-Trade Checklist",
+    icon: "✅",
+    desc: "Six questions before every entry. If any answer is No — no trade.",
+    render: () => `
+<div>
+<div class="tool-header">
+  <button class="tool-back" onclick="showToolList()">← All Tools</button>
+  <div class="tool-header-top">
+    <div>
+      <div class="tool-view-title">Pre-Trade Checklist</div>
+      <div class="tool-view-desc">Complete this before every single entry. No exceptions.</div>
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  <div class="form-label">Trade setup <span>(brief description)</span></div>
+  <input type="text" id="tradeSetup" placeholder="e.g. XAUUSD buy limit at 3285 — 1H support zone">
+</div>
+
+<div id="preTradeChecks">
+  <div class="checklist-item" data-question="Why this level?">
+    <div class="check-box" onclick="toggleCheck(this)"></div>
+    <div class="checklist-text">I know exactly why this level is significant<div class="checklist-sub">It's a confirmed 1H support zone / institutional level — not a feeling</div></div>
+  </div>
+  <div class="checklist-item" data-question="Macro aligned?">
+    <div class="check-box" onclick="toggleCheck(this)"></div>
+    <div class="checklist-text">This trade is aligned with the macro context<div class="checklist-sub">The narrative supports this direction. No contradictory major news imminent.</div></div>
+  </div>
+  <div class="checklist-item" data-question="Stop loss set?">
+    <div class="check-box" onclick="toggleCheck(this)"></div>
+    <div class="checklist-text">My exact stop loss level is defined<div class="checklist-sub">Not approximate. Exact price. ~$20 below entry zone.</div></div>
+  </div>
+  <div class="checklist-item" data-question="3:1 R:R minimum?">
+    <div class="check-box" onclick="toggleCheck(this)"></div>
+    <div class="checklist-text">Minimum 3:1 reward-to-risk confirmed<div class="checklist-sub">Target is at least 3x my stop loss distance from entry</div></div>
+  </div>
+  <div class="checklist-item" data-question="Emotional state neutral?">
+    <div class="check-box" onclick="toggleCheck(this)"></div>
+    <div class="checklist-text">I am in a neutral, calm emotional state<div class="checklist-sub">No urgency, FOMO, revenge, or desperation present</div></div>
+  </div>
+  <div class="checklist-item" data-question="In the plan?">
+    <div class="check-box" onclick="toggleCheck(this)"></div>
+    <div class="checklist-text">This trade is in my plan — I'm not bending a rule<div class="checklist-sub">If I have to justify this to myself for more than 10 seconds, it's a No</div></div>
+  </div>
+</div>
+
+<div class="result-box mt-24" id="tradeVerdict" style="display:none"></div>
+
+<div class="form-group mt-16">
+  <div class="form-label">Entry price</div>
+  <input type="text" id="tradeEntry" placeholder="e.g. 3285.00">
+</div>
+<div class="form-group">
+  <div class="form-label">Stop loss level</div>
+  <input type="text" id="tradeSL" placeholder="e.g. 3265.00">
+</div>
+<div class="form-group">
+  <div class="form-label">Target level</div>
+  <input type="text" id="tradeTP" placeholder="e.g. 3345.00">
+</div>
+
+<div class="pullquote" style="margin-top:16px">The critical question: If I did not take this trade and it went without me — would I feel relief or regret? Relief = it wasn't really your setup. Regret = it was.</div>
+
+<div class="action-bar">
+  <button class="btn btn-primary" onclick="savePreTrade()">Log This Trade</button>
+  <button class="btn btn-secondary" onclick="downloadPreTrade()">Download .txt</button>
+</div>
+
+<div class="history-section">
+  <div class="history-title">Trade Log</div>
+  <div id="preTradeHistory"></div>
+</div>
+</div>`
+  },
+  {
+    id: 4, name: "Impulse Interview",
+    icon: "🚨",
+    desc: "Four questions before any impulsive trade. Answer all four. Then decide.",
+    render: () => `
+<div>
+<div class="tool-header">
+  <button class="tool-back" onclick="showToolList()">← All Tools</button>
+  <div class="tool-header-top">
+    <div>
+      <div class="tool-view-title">Impulse Interview</div>
+      <div class="tool-view-desc">You're feeling the urge to act. Answer all four questions first.</div>
+    </div>
+  </div>
+</div>
+
+<div class="insight-box" style="margin-bottom:28px"><div class="insight-box-label">Before you touch anything</div><p>Set a 90-second timer. Do not open the trade. Read these four questions slowly. Then answer each one honestly.</p></div>
+
+<div class="form-group">
+  <div class="form-label">1. What just happened that triggered this urge?</div>
+  <textarea id="impulse1" placeholder="Be specific. What did you see or feel right before you wanted to act?"></textarea>
+</div>
+
+<div class="form-group">
+  <div class="form-label">2. Which of the Ten Traps is this? <span>(be honest)</span></div>
+  <div class="radio-group" id="impulseTrap">
+    <label class="radio-option" onclick="selectRadio(this,'impulseTrap')"><input type="radio" name="impulseTrap" value="Urgency Trap">Urgency</label>
+    <label class="radio-option" onclick="selectRadio(this,'impulseTrap')"><input type="radio" name="impulseTrap" value="Reset Trap">Reset</label>
+    <label class="radio-option" onclick="selectRadio(this,'impulseTrap')"><input type="radio" name="impulseTrap" value="So Close">So Close</label>
+    <label class="radio-option" onclick="selectRadio(this,'impulseTrap')"><input type="radio" name="impulseTrap" value="Finish Line Paradox">Finish Line</label>
+    <label class="radio-option" onclick="selectRadio(this,'impulseTrap')"><input type="radio" name="impulseTrap" value="3-Stage Breakdown">3rd Loss</label>
+    <label class="radio-option" onclick="selectRadio(this,'impulseTrap')"><input type="radio" name="impulseTrap" value="Financial Pressure">Financial Pressure</label>
+    <label class="radio-option" onclick="selectRadio(this,'impulseTrap')"><input type="radio" name="impulseTrap" value="Not sure">Not sure</label>
+  </div>
+</div>
+
+<div class="form-group">
+  <div class="form-label">3. If you take this trade and it loses — what happens?</div>
+  <textarea id="impulse3" placeholder="Write the actual consequence. Not the worst case fantasy — the real consequence."></textarea>
+</div>
+
+<div class="form-group">
+  <div class="form-label">4. Is this trade in your plan?</div>
+  <div class="radio-group" id="impulseInPlan">
+    <label class="radio-option" onclick="selectRadio(this,'impulseInPlan');updateImpulseVerdict()"><input type="radio" name="impulseInPlan" value="Yes — exactly in my plan">Yes — exactly in my plan</label>
+    <label class="radio-option" onclick="selectRadio(this,'impulseInPlan');updateImpulseVerdict()"><input type="radio" name="impulseInPlan" value="Mostly — with a small adjustment">Mostly — small adjustment</label>
+    <label class="radio-option" onclick="selectRadio(this,'impulseInPlan');updateImpulseVerdict()"><input type="radio" name="impulseInPlan" value="No — this is off-plan">No — this is off-plan</label>
+  </div>
+</div>
+
+<div id="impulseVerdict" class="result-box" style="display:none;margin-top:20px"></div>
+
+<div class="action-bar">
+  <button class="btn btn-primary" onclick="saveImpulse()">Log This Interview</button>
+  <button class="btn btn-outline" onclick="resetImpulse()">Clear Form</button>
+</div>
+
+<div class="history-section">
+  <div class="history-title">Impulse Log</div>
+  <div id="impulseHistory"></div>
+</div>
+</div>`
+  },
+  {
+    id: 5, name: "Decision Journal",
+    icon: "📓",
+    desc: "Before, during and after emotional tracking for every trade",
+    render: () => `
+<div>
+<div class="tool-header">
+  <button class="tool-back" onclick="showToolList()">← All Tools</button>
+  <div class="tool-header-top">
+    <div>
+      <div class="tool-view-title">Decision Journal</div>
+      <div class="tool-view-desc">Not what happened — why you decided what you decided.</div>
+    </div>
+  </div>
+</div>
+
+<div class="tab-bar">
+  <div class="tab active" onclick="switchTab(this,'tab-before')">Before Trade</div>
+  <div class="tab" onclick="switchTab(this,'tab-during')">During Trade</div>
+  <div class="tab" onclick="switchTab(this,'tab-after')">After Trade</div>
+</div>
+
+<div class="tab-content active" id="tab-before">
+  <div class="form-group">
+    <div class="form-label">Trade description</div>
+    <input type="text" id="dj-setup" placeholder="e.g. XAUUSD buy at 3285, SL 3265, TP 3345">
+  </div>
+  <div class="form-group">
+    <div class="form-label">What is the setup? Why does this level matter?</div>
+    <textarea id="dj-why" placeholder="Explain the trade as if to another trader. What makes this valid?"></textarea>
+  </div>
+  <div class="form-group">
+    <div class="form-label">Emotional state before entry <span>(1-10)</span></div>
+    <div class="range-group">
+      <input type="range" min="1" max="10" value="7" id="dj-before-state" oninput="document.getElementById('dj-before-val').textContent=this.value">
+      <div class="range-val" id="dj-before-val">7</div>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="form-label">What do you expect to happen? Why?</div>
+    <textarea id="dj-expect" placeholder="What's the thesis? What would invalidate it?"></textarea>
+  </div>
+</div>
+
+<div class="tab-content" id="tab-during">
+  <div class="form-group">
+    <div class="form-label">What happened when it moved against you?</div>
+    <textarea id="dj-against" placeholder="What did you feel? What was your first instinct?"></textarea>
+  </div>
+  <div class="form-group">
+    <div class="form-label">Did you adjust the plan at any point?</div>
+    <div class="radio-group" id="dj-adjusted">
+      <label class="radio-option" onclick="selectRadio(this,'dj-adjusted')"><input type="radio" name="dj-adjusted" value="No — held the plan">No — held the plan</label>
+      <label class="radio-option" onclick="selectRadio(this,'dj-adjusted')"><input type="radio" name="dj-adjusted" value="Moved SL">Moved SL</label>
+      <label class="radio-option" onclick="selectRadio(this,'dj-adjusted')"><input type="radio" name="dj-adjusted" value="Exited early">Exited early</label>
+      <label class="radio-option" onclick="selectRadio(this,'dj-adjusted')"><input type="radio" name="dj-adjusted" value="Added to position">Added to position</label>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="form-label">If you adjusted — why? <span>(be honest)</span></div>
+    <textarea id="dj-why-adjusted" placeholder="What was driving the adjustment? Fear? Hope? Logic?"></textarea>
+  </div>
+</div>
+
+<div class="tab-content" id="tab-after">
+  <div class="form-group">
+    <div class="form-label">Outcome</div>
+    <div class="radio-group" id="dj-outcome">
+      <label class="radio-option" onclick="selectRadio(this,'dj-outcome')"><input type="radio" name="dj-outcome" value="Win — hit target">Win — hit target</label>
+      <label class="radio-option" onclick="selectRadio(this,'dj-outcome')"><input type="radio" name="dj-outcome" value="Loss — stopped out">Loss — stopped out</label>
+      <label class="radio-option" onclick="selectRadio(this,'dj-outcome')"><input type="radio" name="dj-outcome" value="Breakeven">Breakeven</label>
+      <label class="radio-option" onclick="selectRadio(this,'dj-outcome')"><input type="radio" name="dj-outcome" value="Manually closed">Manually closed</label>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="form-label">What actually happened vs what you expected?</div>
+    <textarea id="dj-vs-expect" placeholder="Where was your analysis right? Where was it off?"></textarea>
+  </div>
+  <div class="form-group">
+    <div class="form-label">Process score <span>(how well did you follow the plan, regardless of outcome?)</span></div>
+    <div class="range-group">
+      <input type="range" min="1" max="10" value="7" id="dj-process" oninput="document.getElementById('dj-process-val').textContent=this.value">
+      <div class="range-val" id="dj-process-val">7</div>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="form-label">One lesson — specific and actionable</div>
+    <textarea id="dj-lesson" placeholder="Not 'I should be more disciplined.' Something concrete: 'Next time the setup is at a 15M FVG without 1H confirmation, I wait.'"></textarea>
+  </div>
+</div>
+
+<div class="action-bar mt-24">
+  <button class="btn btn-primary" onclick="saveDecisionJournal()">Save Journal Entry</button>
+  <button class="btn btn-secondary" onclick="downloadDecisionJournal()">Download .txt</button>
+</div>
+
+<div class="history-section">
+  <div class="history-title">Journal History</div>
+  <div id="djHistory"></div>
+</div>
+</div>`
+  },
+  {
+    id: 6, name: "Life Standards Builder",
+    icon: "🏗️",
+    desc: "Your non-negotiables, habits to release, intentions and impulse warnings",
+    render: () => `
+<div>
+<div class="tool-header">
+  <button class="tool-back" onclick="showToolList()">← All Tools</button>
+  <div class="tool-header-top">
+    <div>
+      <div class="tool-view-title">Life Standards Builder</div>
+      <div class="tool-view-desc">The foundation your trading sits on. Build it deliberately.</div>
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  <div class="form-label">My non-negotiables <span>(floors I hold regardless of how I feel)</span></div>
+  <textarea id="ls-nonneg" placeholder="e.g. Minimum 7 hours sleep. Morning routine before charts. Bills reviewed weekly. No trading under emotional duress." style="min-height:100px"></textarea>
+</div>
+
+<div class="form-group">
+  <div class="form-label">Habits I am releasing <span>(behaviours that undermine my performance)</span></div>
+  <textarea id="ls-release" placeholder="e.g. Doom-scrolling trading Twitter. Following signal groups. Checking P&L mid-session. Overtrading boredom." style="min-height:100px"></textarea>
+</div>
+
+<div class="form-group">
+  <div class="form-label">My trading intentions <span>(who I am committed to being)</span></div>
+  <textarea id="ls-intentions" placeholder="e.g. I am someone who follows the process without exception. I am patient. I wait for my setup." style="min-height:100px"></textarea>
+</div>
+
+<div class="form-group">
+  <div class="form-label">My impulse warning signs <span>(how do I know I'm in the danger zone?)</span></div>
+  <textarea id="ls-warnings" placeholder="e.g. Checking the chart every 2 minutes. Feeling 'just this once' about a rule. Wanting to 'get back' a loss immediately." style="min-height:100px"></textarea>
+</div>
+
+<div class="form-group">
+  <div class="form-label">My environment commitments <span>(how I set up my trading space)</span></div>
+  <textarea id="ls-env" placeholder="e.g. Dedicated desk only. Phone in another room. Journal open before platform. No trading after 10pm." style="min-height:100px"></textarea>
+</div>
+
+<div class="action-bar">
+  <button class="btn btn-primary" onclick="saveLifeStandards()">Save Standards</button>
+  <button class="btn btn-secondary" onclick="downloadLifeStandards()">Download .txt</button>
+  <button class="btn btn-outline btn-sm" onclick="loadLifeStandards()">Load Saved</button>
+</div>
+<div id="ls-save-msg" class="mt-16 text-sm text-success hidden">Standards saved.</div>
+</div>`
+  },
+  {
+    id: 7, name: "Limiting Beliefs Reframer",
+    icon: "🔄",
+    desc: "Identify the belief, find its origin, challenge it, replace it",
+    render: () => `
+<div>
+<div class="tool-header">
+  <button class="tool-back" onclick="showToolList()">← All Tools</button>
+  <div class="tool-header-top">
+    <div>
+      <div class="tool-view-title">Limiting Beliefs Reframer</div>
+      <div class="tool-view-desc">Old beliefs can be replaced. New ones are built one vote at a time.</div>
+    </div>
+  </div>
+</div>
+
+<div class="insight-box" style="margin-bottom:28px"><div class="insight-box-label">How This Works</div><p>Write the belief honestly. Find where it came from. Challenge it with evidence. Replace it with an intentional new belief. Then put the new belief where you'll see it daily.</p></div>
+
+<div class="form-group">
+  <div class="form-label">The limiting belief <span>(write it exactly as you feel it, not as you wish you didn't)</span></div>
+  <textarea id="lb-belief" placeholder='e.g. "I always mess things up at the last minute" or "I don'\''t deserve to be financially free"'></textarea>
+</div>
+
+<div class="form-group">
+  <div class="form-label">Where did this belief come from? <span>(as best you can trace it)</span></div>
+  <textarea id="lb-origin" placeholder="Family, early experience, a specific event, repeated pattern..."></textarea>
+</div>
+
+<div class="form-group">
+  <div class="form-label">Evidence that challenges this belief <span>(what has actually happened that contradicts it?)</span></div>
+  <textarea id="lb-challenge" placeholder="Name real examples from your life where you didn't mess things up, did succeed, did follow through..."></textarea>
+</div>
+
+<div class="form-group">
+  <div class="form-label">The replacement belief <span>(intentional, specific, present tense)</span></div>
+  <textarea id="lb-replace" placeholder='e.g. "I am someone who follows through when I have a clear process. I have proven this." '></textarea>
+</div>
+
+<div class="form-group">
+  <div class="form-label">Daily reminder placement <span>(where will you put this so you see it every day?)</span></div>
+  <input type="text" id="lb-placement" placeholder="e.g. On my phone lock screen / on my trading desk / in my morning journal">
+</div>
+
+<div class="action-bar">
+  <button class="btn btn-primary" onclick="saveBelief()">Save This Belief</button>
+  <button class="btn btn-secondary" onclick="downloadBeliefs()">Download All .txt</button>
+</div>
+
+<div class="history-section">
+  <div class="history-title">Belief Rewrites</div>
+  <div id="beliefHistory"></div>
+</div>
+</div>`
+  },
+  {
+    id: 8, name: "Weekly Review",
+    icon: "📊",
+    desc: "Sunday check-in — pattern, best session, one improvement, process score",
+    render: () => `
+<div>
+<div class="tool-header">
+  <button class="tool-back" onclick="showToolList()">← All Tools</button>
+  <div class="tool-header-top">
+    <div>
+      <div class="tool-view-title">Weekly Review</div>
+      <div class="tool-view-desc">Sunday. 20 minutes. Where insights become permanent change.</div>
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  <div class="form-label">Week of</div>
+  <input type="text" id="wr-week" placeholder="e.g. 16–20 June 2025">
+</div>
+
+<div class="form-group">
+  <div class="form-label">Trades taken this week</div>
+  <input type="number" id="wr-trades" placeholder="0">
+</div>
+
+<div class="form-group">
+  <div class="form-label">The pattern in my best session this week</div>
+  <textarea id="wr-best" placeholder="What were you doing differently when things went well? What state were you in?"></textarea>
+</div>
+
+<div class="form-group">
+  <div class="form-label">The pattern in my worst session (or biggest mistake)</div>
+  <textarea id="wr-worst" placeholder="Where did the decision process break down? What triggered it?"></textarea>
+</div>
+
+<div class="form-group">
+  <div class="form-label">How many times did I follow the process completely?</div>
+  <div class="range-group">
+    <input type="range" min="0" max="10" value="7" id="wr-process-count" oninput="document.getElementById('wr-pc-val').textContent=this.value">
+    <div class="range-val" id="wr-pc-val">7</div>
+  </div>
+</div>
+
+<div class="form-group">
+  <div class="form-label">Process quality score for the week <span>(1-10 — not P&L, process)</span></div>
+  <div class="range-group">
+    <input type="range" min="1" max="10" value="7" id="wr-score" oninput="document.getElementById('wr-score-val').textContent=this.value">
+    <div class="range-val" id="wr-score-val">7</div>
+  </div>
+</div>
+
+<div class="form-group">
+  <div class="form-label">One specific improvement for next week <span>(concrete, not vague)</span></div>
+  <textarea id="wr-improve" placeholder="Not 'be more disciplined' — something specific: 'I will close the platform after two losses, immediately, before I feel the urge to re-enter.'"></textarea>
+</div>
+
+<div class="form-group">
+  <div class="form-label">Three Cs rating</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:8px">
+    <div>
+      <div class="form-label text-sm">Calm</div>
+      <div class="range-group"><input type="range" min="1" max="10" value="7" id="wr-calm" oninput="document.getElementById('wr-calm-val').textContent=this.value"><div class="range-val" id="wr-calm-val">7</div></div>
+    </div>
+    <div>
+      <div class="form-label text-sm">Consistent</div>
+      <div class="range-group"><input type="range" min="1" max="10" value="7" id="wr-consistent" oninput="document.getElementById('wr-consistent-val').textContent=this.value"><div class="range-val" id="wr-consistent-val">7</div></div>
+    </div>
+    <div>
+      <div class="form-label text-sm">Committed</div>
+      <div class="range-group"><input type="range" min="1" max="10" value="7" id="wr-committed" oninput="document.getElementById('wr-committed-val').textContent=this.value"><div class="range-val" id="wr-committed-val">7</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="action-bar">
+  <button class="btn btn-primary" onclick="saveWeeklyReview()">Save Review</button>
+  <button class="btn btn-secondary" onclick="downloadWeeklyReview()">Download .txt</button>
+</div>
+
+<div class="history-section">
+  <div class="history-title">Review History</div>
+  <div id="wrHistory"></div>
+</div>
+</div>`
+  },
+  {
+    id: 9, name: "4-Week Recovery Protocol",
+    icon: "🔁",
+    desc: "Structured recovery after blowing a funded account — week by week",
+    render: () => `
+<div>
+<div class="tool-header">
+  <button class="tool-back" onclick="showToolList()">← All Tools</button>
+  <div class="tool-header-top">
+    <div>
+      <div class="tool-view-title">4-Week Recovery Protocol</div>
+      <div class="tool-view-desc">After the blow-up. This is how professionals come back.</div>
+    </div>
+  </div>
+</div>
+
+<div class="insight-box" style="margin-bottom:28px"><div class="insight-box-label">Before You Start</div><p>You just lost a funded account. That's painful. This protocol isn't about getting back quickly — it's about getting back right. Rushing this is how you blow the next one too.</p></div>
+
+<div class="week-grid">
+  <div class="week-box active-week" onclick="selectWeek(1)" id="week-tab-1"><div class="week-box-num">1</div><div class="week-box-label">Full Stop</div></div>
+  <div class="week-box" onclick="selectWeek(2)" id="week-tab-2"><div class="week-box-num">2</div><div class="week-box-label">Analysis</div></div>
+  <div class="week-box" onclick="selectWeek(3)" id="week-tab-3"><div class="week-box-num">3</div><div class="week-box-label">Demo Return</div></div>
+  <div class="week-box" onclick="selectWeek(4)" id="week-tab-4"><div class="week-box-num">4</div><div class="week-box-label">Assessment</div></div>
+</div>
+
+<div id="recovery-week-content"></div>
+
+<div class="action-bar mt-24">
+  <button class="btn btn-primary" onclick="saveRecovery()">Save Progress</button>
+  <button class="btn btn-secondary" onclick="downloadRecovery()">Download .txt</button>
+</div>
+</div>`
+  },
+  {
+    id: 10, name: "Goals & Standards Planner",
+    icon: "🎯",
+    desc: "Trading goals across three timeframes, life goals and identity statement",
+    render: () => `
+<div>
+<div class="tool-header">
+  <button class="tool-back" onclick="showToolList()">← All Tools</button>
+  <div class="tool-header-top">
+    <div>
+      <div class="tool-view-title">Goals & Standards Planner</div>
+      <div class="tool-view-desc">Become the person first. The results follow.</div>
+    </div>
+  </div>
+</div>
+
+<div class="pullquote" style="margin-bottom:28px">Goals are outcomes you want. Standards are who you're committed to being. Build the standard. The goal arrives on its own.</div>
+
+<h3 style="margin-bottom:16px;color:var(--navy)">Trading Goals</h3>
+
+<div class="form-group">
+  <div class="form-label">90-day target <span>(realistic, process-focused)</span></div>
+  <textarea id="goal-90" placeholder="e.g. 20–30 documented, consistent trades on live account. Stop loss honoured every trade. Journal completed every session." style="min-height:80px"></textarea>
+</div>
+
+<div class="form-group">
+  <div class="form-label">6-month target</div>
+  <textarea id="goal-6m" placeholder="e.g. FTMO $100k challenge attempted with documented track record of consistent live trading." style="min-height:80px"></textarea>
+</div>
+
+<div class="form-group">
+  <div class="form-label">12-month vision</div>
+  <textarea id="goal-12m" placeholder="e.g. First funded account payout received. Two funded accounts running simultaneously." style="min-height:80px"></textarea>
+</div>
+
+<div class="lesson-divider"></div>
+
+<h3 style="margin-bottom:16px;color:var(--navy)">Life Goals</h3>
+
+<div class="form-group">
+  <div class="form-label">Financial stability goal</div>
+  <textarea id="goal-financial" placeholder="e.g. Income from job and massage covering all bills by end of month 2. No financial pressure entering trading sessions." style="min-height:80px"></textarea>
+</div>
+
+<div class="form-group">
+  <div class="form-label">Personal development goal</div>
+  <textarea id="goal-personal" placeholder="e.g. Daily reset tool used without exception for 90 days. Weekly review completed every Sunday." style="min-height:80px"></textarea>
+</div>
+
+<div class="lesson-divider"></div>
+
+<h3 style="margin-bottom:16px;color:var(--navy)">Identity Statement</h3>
+<div class="form-group">
+  <div class="form-label">Who am I becoming? <span>(write in present tense as if already true)</span></div>
+  <textarea id="goal-identity" placeholder='e.g. "I am a consistent, disciplined professional trader who executes the process with precision and treats every session as practice for a funded account. I am calm under pressure, honest in my journalling, and patient with my progress."' style="min-height:120px"></textarea>
+</div>
+
+<div class="action-bar">
+  <button class="btn btn-primary" onclick="saveGoals()">Save Planner</button>
+  <button class="btn btn-secondary" onclick="downloadGoals()">Download .txt</button>
+  <button class="btn btn-outline btn-sm" onclick="loadGoals()">Load Saved</button>
+</div>
+<div id="goals-save-msg" class="mt-16 text-sm text-success hidden">Goals saved.</div>
+</div>`
+  }
+];
+
+
+// ===================== STATE =====================
+let currentModuleId = 1;
+let currentToolId = 1;
+let completedModules = JSON.parse(localStorage.getItem('tfio_completed') || '[]');
+let activeWeek = 1;
+
+// ===================== NAVIGATION =====================
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  const btns = document.querySelectorAll('.nav-btn');
+  const idx = ['home','lesson','tools'].indexOf(name);
+  if(idx >= 0) btns[idx].classList.add('active');
+  if(name === 'home') renderHome();
+  if(name === 'lesson') renderLesson(currentModuleId);
+  if(name === 'tools') showToolList();
+  window.scrollTo(0,0);
+}
+
+function openModule(id) {
+  currentModuleId = id;
+  showView('lesson');
+}
+
+function openTool(id) {
+  currentToolId = id;
+  showView('tools');
+  renderTool(id);
+}
+
+function showToolList() {
+  const tc = document.getElementById('toolContent');
+  tc.innerHTML = `
+    <div class="tool-header">
+      <div class="tool-view-title">Your Tools</div>
+      <div class="tool-view-desc">Ten interactive tools. All save in your browser. Download anytime.</div>
+    </div>
+    <div class="tools-grid" style="margin-top:28px">
+      ${TOOLS.map(t => `
+        <div class="tool-card" onclick="renderTool(${t.id})">
+          <div class="tool-icon">${t.icon}</div>
+          <h4>${t.name}</h4>
+          <p>${t.desc}</p>
+        </div>
+      `).join('')}
+    </div>`;
+}
+
+// ===================== HOME =====================
+function renderHome() {
+  const mg = document.getElementById('modulesGrid');
+  const tg = document.getElementById('toolsGrid');
+  if(mg) {
+    mg.innerHTML = MODULES.map(m => {
+      const done = completedModules.includes(m.id);
+      return `
+        <div class="module-card ${done?'completed':''}" onclick="openModule(${m.id})">
+          <div class="module-num">Module ${m.id} / 11</div>
+          <h3>${m.icon} ${m.name}</h3>
+          <p>${m.desc}</p>
+          <div class="module-status ${done?'done':''}">
+            <div class="status-dot ${done?'done':''}"></div>
+            ${done ? 'Completed' : 'Not started'}
+          </div>
+        </div>`;
+    }).join('');
+  }
+  if(tg) {
+    tg.innerHTML = TOOLS.map(t => `
+      <div class="tool-card" onclick="openTool(${t.id})">
+        <div class="tool-icon">${t.icon}</div>
+        <h4>${t.name}</h4>
+        <p>${t.desc}</p>
+      </div>`).join('');
+  }
+  updateProgress();
+}
+
+// ===================== LESSON =====================
+function renderLesson(id) {
+  currentModuleId = id;
+  const m = MODULES.find(x => x.id === id);
+  if(!m) return;
+
+  const sidebar = document.getElementById('lessonSidebar');
+  const main = document.getElementById('lessonMain');
+
+  sidebar.innerHTML = `
+    <div class="sidebar-section-title">Modules</div>
+    ${MODULES.map(mod => {
+      const done = completedModules.includes(mod.id);
+      return `<div class="sidebar-item ${mod.id===id?'active':''} ${done?'completed':''}" onclick="renderLesson(${mod.id})">
+        ${mod.icon} ${mod.name}
+        <span class="sidebar-check">${done?'✓':''}</span>
+      </div>`;
+    }).join('')}
+    <div class="sidebar-section-title">Tools</div>
+    ${TOOLS.map(t => `<div class="sidebar-item" onclick="openTool(${t.id})">${t.icon} ${t.name}</div>`).join('')}`;
+
+  const done = completedModules.includes(id);
+  const prev = MODULES.find(x => x.id === id - 1);
+  const next = MODULES.find(x => x.id === id + 1);
+
+  main.innerHTML = `
+    <div class="lesson-eyebrow">Module ${m.id} of ${MODULES.length}</div>
+    <h1 class="lesson-title">${m.name}</h1>
+    <div class="lesson-subtitle">${m.subtitle}</div>
+    <div class="lesson-divider"></div>
+    ${m.content}
+    <div class="lesson-nav">
+      ${prev ? `<button class="btn btn-secondary" onclick="renderLesson(${prev.id})">← ${prev.name}</button>` : '<div></div>'}
+      <button class="btn ${done?'btn-secondary':'btn-complete'}" onclick="markComplete(${m.id})">
+        ${done ? '✓ Completed' : 'Mark Complete'}
+      </button>
+      ${next ? `<button class="btn btn-primary" onclick="renderLesson(${next.id})">${next.name} →</button>` : '<button class="btn btn-navy" onclick="showView(\'home\')">Back to Home</button>'}
+    </div>`;
+
+  window.scrollTo(0,0);
+}
+
+function markComplete(id) {
+  if(!completedModules.includes(id)) {
+    completedModules.push(id);
+    localStorage.setItem('tfio_completed', JSON.stringify(completedModules));
+    updateProgress();
+    showNotification('Module completed! ✓', 'success');
+  }
+  renderLesson(id);
+}
+
+function updateProgress() {
+  const pct = (completedModules.length / MODULES.length) * 100;
+  const fill = document.getElementById('progressFill');
+  const label = document.getElementById('progressLabel');
+  if(fill) fill.style.width = pct + '%';
+  if(label) label.textContent = completedModules.length + ' / ' + MODULES.length;
+}
+
+// ===================== TOOLS RENDER =====================
+function renderTool(id) {
+  currentToolId = id;
+  const tool = TOOLS.find(t => t.id === id);
+  if(!tool) return;
+  const tc = document.getElementById('toolContent');
+  tc.innerHTML = tool.render();
+  // post-render inits
+  if(id === 1) loadDailyHistory();
+  if(id === 2) { loadFinance(); calcFinance(); }
+  if(id === 3) loadPreTradeHistory();
+  if(id === 4) loadImpulseHistory();
+  if(id === 5) loadDJHistory();
+  if(id === 6) loadLifeStandards();
+  if(id === 7) loadBeliefHistory();
+  if(id === 8) loadWRHistory();
+  if(id === 9) { loadRecovery(); selectWeek(1); }
+  if(id === 10) loadGoals();
+  window.scrollTo(0,0);
+}
+
+// ===================== UTILITY FUNCTIONS =====================
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  if(el.classList.contains('checked')) el.textContent = '✓';
+  else el.textContent = '';
+  checkTradeVerdict();
+}
+
+function selectRadio(el, groupId) {
+  document.querySelectorAll(`#${groupId} .radio-option`).forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function switchTab(el, tabId) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const tc = document.getElementById(tabId);
+  if(tc) tc.classList.add('active');
+}
+
+function showNotification(msg, type) {
+  const n = document.getElementById('notification');
+  n.textContent = msg;
+  n.className = 'notification' + (type ? ' ' + type : '');
+  n.classList.add('show');
+  setTimeout(() => n.classList.remove('show'), 3000);
+}
+
+function fmtDate(d) {
+  return new Date(d).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+
+function getChecked(containerId) {
+  const container = document.getElementById(containerId);
+  if(!container) return [];
+  return Array.from(container.querySelectorAll('.check-box.checked'))
+    .map((el,i) => {
+      const item = el.closest('.checklist-item');
+      return item ? (item.querySelector('.checklist-text')?.childNodes[0]?.textContent?.trim() || 'Item ' + (i+1)) : '';
+    }).filter(Boolean);
+}
+
+function getRadioVal(groupId) {
+  const selected = document.querySelector(`#${groupId} .radio-option.selected`);
+  return selected ? selected.querySelector('input')?.value || '' : '';
+}
+
+function downloadTxt(filename, content) {
+  const blob = new Blob([content], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+}
+
+// ===================== TOOL 1: DAILY RESET =====================
+function saveDailyReset() {
+  const score = document.getElementById('emotionScore')?.value;
+  const tag = getRadioVal('emotionTag');
+  const notes = document.getElementById('dailyNotes')?.value;
+  const checked = getChecked('dailyChecklist');
+  const entry = {
+    date: new Date().toISOString(),
+    emotionScore: score,
+    emotionTag: tag,
+    checkedItems: checked,
+    notes: notes
+  };
+  const history = JSON.parse(localStorage.getItem('tfio_daily_resets') || '[]');
+  history.unshift(entry);
+  localStorage.setItem('tfio_daily_resets', JSON.stringify(history));
+  loadDailyHistory();
+  showNotification('Session saved ✓', 'success');
+
+  const warn = document.getElementById('emotionWarning');
+  if(warn) {
+    if(parseInt(score) < 6) warn.innerHTML = '<span style="color:var(--warning)">⚠️ Score below 6 — consider no trade today</span>';
+    else warn.innerHTML = '';
+  }
+}
+
+function loadDailyHistory() {
+  const history = JSON.parse(localStorage.getItem('tfio_daily_resets') || '[]');
+  const el = document.getElementById('dailyHistory');
+  if(!el) return;
+  if(!history.length) { el.innerHTML = '<div class="history-empty">No sessions saved yet.</div>'; return; }
+  el.innerHTML = history.slice(0,10).map(e => `
+    <div class="history-item">
+      <div class="history-item-date">${fmtDate(e.date)}</div>
+      <div><strong>State: ${e.emotionScore}/10</strong> — ${e.emotionTag}</div>
+      ${e.notes ? `<div class="text-mid text-sm" style="margin-top:4px">${e.notes}</div>` : ''}
+    </div>`).join('');
+}
+
+function downloadDailyReset() {
+  const history = JSON.parse(localStorage.getItem('tfio_daily_resets') || '[]');
+  const content = history.map(e => `Date: ${fmtDate(e.date)}\nState: ${e.emotionScore}/10 — ${e.emotionTag}\nChecked: ${(e.checkedItems||[]).join(', ')}\nNotes: ${e.notes || ''}\n`).join('\n---\n\n');
+  downloadTxt('daily-resets.txt', content || 'No sessions saved.');
+}
+
+// ===================== TOOL 2: FINANCE =====================
+function addTierRow(tierId) {
+  const container = document.getElementById(tierId);
+  if(!container) return;
+  const row = document.createElement('div');
+  row.className = 'finance-row';
+  row.innerHTML = `<input type="text" placeholder="Item" oninput="calcFinance()"><input type="number" class="finance-amount" placeholder="£" oninput="calcFinance()">`;
+  container.appendChild(row);
+}
+
+function calcFinance() {
+  const income = parseFloat(document.getElementById('monthlyIncome')?.value) || 0;
+  let t1 = 0, t2 = 0;
+
+  document.querySelectorAll('#tier1Items .finance-amount').forEach(i => t1 += parseFloat(i.value)||0);
+  document.querySelectorAll('#tier2Items .finance-amount').forEach(i => t2 += parseFloat(i.value)||0);
+
+  const remaining = income - t1 - t2;
+  const trading = Math.max(0, remaining * 0.25);
+
+  const set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+  set('tier1Total', '£' + t1.toFixed(0));
+  set('tier2Total', '£' + t2.toFixed(0));
+  set('sumIncome', '£' + income.toFixed(0));
+  set('sumT1', '−£' + t1.toFixed(0));
+  set('sumT2', '−£' + t2.toFixed(0));
+  set('sumRemaining', '£' + remaining.toFixed(0));
+  set('tradingBudget', '£' + trading.toFixed(0));
+
+  const warn = document.getElementById('financeWarning');
+  if(warn) {
+    if(remaining < 0) {
+      warn.innerHTML = '<div class="result-box danger"><strong>⚠️ Deficit:</strong> Your bills exceed your income. Do not trade until this is resolved.</div>';
+    } else if(trading === 0) {
+      warn.innerHTML = '<div class="result-box warning">No surplus available for trading this month. Stabilise income first.</div>';
+    } else {
+      warn.innerHTML = `<div class="result-box success">Trading budget available: <strong>£${trading.toFixed(0)}</strong> (25% of your £${remaining.toFixed(0)} surplus). Bills are covered. Trade from strength.</div>`;
+    }
+  }
+}
+
+function saveFinance() {
+  const data = {
+    date: new Date().toISOString(),
+    income: document.getElementById('monthlyIncome')?.value,
+    t1Total: document.getElementById('tier1Total')?.textContent,
+    t2Total: document.getElementById('tier2Total')?.textContent,
+    remaining: document.getElementById('sumRemaining')?.textContent,
+    tradingBudget: document.getElementById('tradingBudget')?.textContent
+  };
+  localStorage.setItem('tfio_finance', JSON.stringify(data));
+  showNotification('Budget saved ✓', 'success');
+}
+
+function loadFinance() {
+  const data = JSON.parse(localStorage.getItem('tfio_finance') || 'null');
+  if(data && data.income) {
+    const el = document.getElementById('monthlyIncome');
+    if(el) el.value = data.income;
+  }
+}
+
+function downloadFinance() {
+  const d = {
+    income: document.getElementById('monthlyIncome')?.value||'0',
+    t1: document.getElementById('tier1Total')?.textContent||'',
+    t2: document.getElementById('tier2Total')?.textContent||'',
+    remaining: document.getElementById('sumRemaining')?.textContent||'',
+    trading: document.getElementById('tradingBudget')?.textContent||''
+  };
+  const txt = `FINANCE PRIORITY TRACKER\nDate: ${fmtDate(new Date())}\n\nMonthly Income: £${d.income}\nTier 1 (Survival): ${d.t1}\nTier 2 (Commitments): ${d.t2}\nRemaining (Tier 3): ${d.remaining}\nMax Trading Budget (25% surplus): ${d.trading}\n\nRule: No trading if Tier 1 or Tier 2 are uncovered.`;
+  downloadTxt('finance-tracker.txt', txt);
+}
+
+// ===================== TOOL 3: PRE-TRADE CHECKLIST =====================
+function checkTradeVerdict() {
+  const verdict = document.getElementById('tradeVerdict');
+  if(!verdict) return;
+  const checks = document.querySelectorAll('#preTradeChecks .check-box');
+  const checked = Array.from(checks).filter(c => c.classList.contains('checked')).length;
+  verdict.style.display = 'block';
+  if(checked === 6) {
+    verdict.className = 'result-box success';
+    verdict.innerHTML = '<strong>✓ All six items confirmed.</strong> This trade qualifies. Execute the plan.';
+  } else {
+    verdict.className = 'result-box danger';
+    verdict.innerHTML = `<strong>${6-checked} item(s) unconfirmed.</strong> This trade does not qualify. No entry.`;
+  }
+}
+
+function savePreTrade() {
+  const checks = document.querySelectorAll('#preTradeChecks .check-box');
+  const checked = Array.from(checks).filter(c => c.classList.contains('checked')).length;
+  const entry = {
+    date: new Date().toISOString(),
+    setup: document.getElementById('tradeSetup')?.value,
+    entry: document.getElementById('tradeEntry')?.value,
+    sl: document.getElementById('tradeSL')?.value,
+    tp: document.getElementById('tradeTP')?.value,
+    checkedCount: checked,
+    qualified: checked === 6
+  };
+  const history = JSON.parse(localStorage.getItem('tfio_pretrades') || '[]');
+  history.unshift(entry);
+  localStorage.setItem('tfio_pretrades', JSON.stringify(history));
+  loadPreTradeHistory();
+  showNotification('Trade logged ✓', 'success');
+}
+
+function loadPreTradeHistory() {
+  const history = JSON.parse(localStorage.getItem('tfio_pretrades') || '[]');
+  const el = document.getElementById('preTradeHistory');
+  if(!el) return;
+  if(!history.length) { el.innerHTML = '<div class="history-empty">No trades logged yet.</div>'; return; }
+  el.innerHTML = history.slice(0,10).map(e => `
+    <div class="history-item">
+      <div class="history-item-date">${fmtDate(e.date)}</div>
+      <div><strong>${e.setup || 'No description'}</strong> — Entry: ${e.entry||'—'} SL: ${e.sl||'—'} TP: ${e.tp||'—'}</div>
+      <div class="text-sm ${e.qualified?'text-success':'text-red'} mt-16">${e.qualified?'✓ Qualified (6/6)':'✗ Not qualified ('+e.checkedCount+'/6)'}</div>
+    </div>`).join('');
+}
+
+function downloadPreTrade() {
+  const history = JSON.parse(localStorage.getItem('tfio_pretrades') || '[]');
+  const txt = history.map(e => `Date: ${fmtDate(e.date)}\nSetup: ${e.setup}\nEntry: ${e.entry} | SL: ${e.sl} | TP: ${e.tp}\nQualified: ${e.qualified?'Yes (6/6)':'No ('+e.checkedCount+'/6)'}`).join('\n\n---\n\n');
+  downloadTxt('pre-trade-log.txt', txt || 'No trades logged.');
+}
+
+// ===================== TOOL 4: IMPULSE INTERVIEW =====================
+function updateImpulseVerdict() {
+  const val = getRadioVal('impulseInPlan');
+  const el = document.getElementById('impulseVerdict');
+  if(!el) return;
+  el.style.display = 'block';
+  if(val === 'Yes — exactly in my plan') {
+    el.className = 'result-box success';
+    el.innerHTML = '<strong>This trade is in your plan.</strong> If all six pre-trade questions are also satisfied — you may proceed. But read your answers above first.';
+  } else if(val === 'Mostly — with a small adjustment') {
+    el.className = 'result-box warning';
+    el.innerHTML = '<strong>Caution.</strong> "Mostly" is where most impulsive trades hide. What specifically are you adjusting? Is that adjustment in your rules?';
+  } else if(val === 'No — this is off-plan') {
+    el.className = 'result-box danger';
+    el.innerHTML = '<strong>Off-plan = no trade.</strong> Close the chart. Log this interview. The market will present another setup.';
+  }
+}
+
+function saveImpulse() {
+  const entry = {
+    date: new Date().toISOString(),
+    trigger: document.getElementById('impulse1')?.value,
+    trap: getRadioVal('impulseTrap'),
+    consequence: document.getElementById('impulse3')?.value,
+    inPlan: getRadioVal('impulseInPlan')
+  };
+  const history = JSON.parse(localStorage.getItem('tfio_impulses') || '[]');
+  history.unshift(entry);
+  localStorage.setItem('tfio_impulses', JSON.stringify(history));
+  loadImpulseHistory();
+  showNotification('Impulse logged ✓', 'success');
+}
+
+function resetImpulse() {
+  ['impulse1','impulse3'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  document.querySelectorAll('#impulseTrap .radio-option, #impulseInPlan .radio-option').forEach(o => o.classList.remove('selected'));
+  const el = document.getElementById('impulseVerdict');
+  if(el) el.style.display = 'none';
+}
+
+function loadImpulseHistory() {
+  const history = JSON.parse(localStorage.getItem('tfio_impulses') || '[]');
+  const el = document.getElementById('impulseHistory');
+  if(!el) return;
+  if(!history.length) { el.innerHTML = '<div class="history-empty">No impulses logged. Good.</div>'; return; }
+  el.innerHTML = history.slice(0,8).map(e => `
+    <div class="history-item">
+      <div class="history-item-date">${fmtDate(e.date)}</div>
+      <div><strong>Trap:</strong> ${e.trap||'—'} | <strong>In plan:</strong> ${e.inPlan||'—'}</div>
+      ${e.trigger ? `<div class="text-sm text-mid" style="margin-top:4px">${e.trigger.substring(0,100)}...</div>` : ''}
+    </div>`).join('');
+}
+
+// ===================== TOOL 5: DECISION JOURNAL =====================
+function saveDecisionJournal() {
+  const entry = {
+    date: new Date().toISOString(),
+    setup: document.getElementById('dj-setup')?.value,
+    why: document.getElementById('dj-why')?.value,
+    beforeState: document.getElementById('dj-before-state')?.value,
+    expect: document.getElementById('dj-expect')?.value,
+    against: document.getElementById('dj-against')?.value,
+    adjusted: getRadioVal('dj-adjusted'),
+    whyAdjusted: document.getElementById('dj-why-adjusted')?.value,
+    outcome: getRadioVal('dj-outcome'),
+    vsExpect: document.getElementById('dj-vs-expect')?.value,
+    processScore: document.getElementById('dj-process')?.value,
+    lesson: document.getElementById('dj-lesson')?.value
+  };
+  const history = JSON.parse(localStorage.getItem('tfio_dj') || '[]');
+  history.unshift(entry);
+  localStorage.setItem('tfio_dj', JSON.stringify(history));
+  loadDJHistory();
+  showNotification('Journal entry saved ✓', 'success');
+}
+
+function loadDJHistory() {
+  const history = JSON.parse(localStorage.getItem('tfio_dj') || '[]');
+  const el = document.getElementById('djHistory');
+  if(!el) return;
+  if(!history.length) { el.innerHTML = '<div class="history-empty">No journal entries yet.</div>'; return; }
+  el.innerHTML = history.slice(0,8).map(e => `
+    <div class="history-item">
+      <div class="history-item-date">${fmtDate(e.date)}</div>
+      <div><strong>${e.setup||'No setup'}</strong> — Outcome: ${e.outcome||'—'} | Process: ${e.processScore||'—'}/10</div>
+      ${e.lesson ? `<div class="text-sm text-mid" style="margin-top:4px">Lesson: ${e.lesson.substring(0,120)}</div>` : ''}
+    </div>`).join('');
+}
+
+function downloadDecisionJournal() {
+  const history = JSON.parse(localStorage.getItem('tfio_dj') || '[]');
+  const txt = history.map(e => `Date: ${fmtDate(e.date)}\nSetup: ${e.setup}\nWhy this level: ${e.why}\nState before: ${e.beforeState}/10\nExpected: ${e.expect}\nWhen it moved against: ${e.against}\nAdjusted: ${e.adjusted} — ${e.whyAdjusted}\nOutcome: ${e.outcome}\nVs expected: ${e.vsExpect}\nProcess score: ${e.processScore}/10\nLesson: ${e.lesson}`).join('\n\n---\n\n');
+  downloadTxt('decision-journal.txt', txt || 'No entries yet.');
+}
+
+// ===================== TOOL 6: LIFE STANDARDS =====================
+function saveLifeStandards() {
+  const data = {
+    nonneg: document.getElementById('ls-nonneg')?.value,
+    release: document.getElementById('ls-release')?.value,
+    intentions: document.getElementById('ls-intentions')?.value,
+    warnings: document.getElementById('ls-warnings')?.value,
+    env: document.getElementById('ls-env')?.value,
+    date: new Date().toISOString()
+  };
+  localStorage.setItem('tfio_life_standards', JSON.stringify(data));
+  const msg = document.getElementById('ls-save-msg');
+  if(msg) { msg.classList.remove('hidden'); setTimeout(() => msg.classList.add('hidden'), 3000); }
+  showNotification('Standards saved ✓', 'success');
+}
+
+function loadLifeStandards() {
+  const data = JSON.parse(localStorage.getItem('tfio_life_standards') || 'null');
+  if(!data) return;
+  const fields = {nonneg:'ls-nonneg',release:'ls-release',intentions:'ls-intentions',warnings:'ls-warnings',env:'ls-env'};
+  Object.entries(fields).forEach(([k,id]) => {
+    const el = document.getElementById(id);
+    if(el && data[k]) el.value = data[k];
+  });
+}
+
+function downloadLifeStandards() {
+  const fields = {nonneg:'ls-nonneg',release:'ls-release',intentions:'ls-intentions',warnings:'ls-warnings',env:'ls-env'};
+  const labels = {nonneg:'Non-Negotiables',release:'Habits to Release',intentions:'Intentions',warnings:'Impulse Warning Signs',env:'Environment Commitments'};
+  let txt = 'LIFE STANDARDS\n\n';
+  Object.entries(fields).forEach(([k,id]) => {
+    const el = document.getElementById(id);
+    txt += `${labels[k]}:\n${el?.value||'Not filled in'}\n\n`;
+  });
+  downloadTxt('life-standards.txt', txt);
+}
+
+// ===================== TOOL 7: LIMITING BELIEFS =====================
+function saveBelief() {
+  const entry = {
+    date: new Date().toISOString(),
+    belief: document.getElementById('lb-belief')?.value,
+    origin: document.getElementById('lb-origin')?.value,
+    challenge: document.getElementById('lb-challenge')?.value,
+    replace: document.getElementById('lb-replace')?.value,
+    placement: document.getElementById('lb-placement')?.value
+  };
+  const history = JSON.parse(localStorage.getItem('tfio_beliefs') || '[]');
+  history.unshift(entry);
+  localStorage.setItem('tfio_beliefs', JSON.stringify(history));
+  loadBeliefHistory();
+  // Clear form
+  ['lb-belief','lb-origin','lb-challenge','lb-replace','lb-placement'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value = '';
+  });
+  showNotification('Belief rewritten ✓', 'success');
+}
+
+function loadBeliefHistory() {
+  const history = JSON.parse(localStorage.getItem('tfio_beliefs') || '[]');
+  const el = document.getElementById('beliefHistory');
+  if(!el) return;
+  if(!history.length) { el.innerHTML = '<div class="history-empty">No beliefs rewritten yet.</div>'; return; }
+  el.innerHTML = history.map(e => `
+    <div class="history-item">
+      <div class="history-item-date">${fmtDate(e.date)}</div>
+      <div class="text-sm" style="color:var(--red);margin-bottom:4px">Old: "${e.belief}"</div>
+      <div class="text-sm text-success">New: "${e.replace}"</div>
+    </div>`).join('');
+}
+
+function downloadBeliefs() {
+  const history = JSON.parse(localStorage.getItem('tfio_beliefs') || '[]');
+  const txt = history.map(e => `Date: ${fmtDate(e.date)}\n\nLimiting Belief: ${e.belief}\nOrigin: ${e.origin}\nChallenge Evidence: ${e.challenge}\nReplacement Belief: ${e.replace}\nReminder Placement: ${e.placement}`).join('\n\n---\n\n');
+  downloadTxt('limiting-beliefs.txt', txt || 'No beliefs recorded.');
+}
+
+// ===================== TOOL 8: WEEKLY REVIEW =====================
+function saveWeeklyReview() {
+  const entry = {
+    date: new Date().toISOString(),
+    week: document.getElementById('wr-week')?.value,
+    trades: document.getElementById('wr-trades')?.value,
+    best: document.getElementById('wr-best')?.value,
+    worst: document.getElementById('wr-worst')?.value,
+    processCount: document.getElementById('wr-process-count')?.value,
+    score: document.getElementById('wr-score')?.value,
+    improve: document.getElementById('wr-improve')?.value,
+    calm: document.getElementById('wr-calm')?.value,
+    consistent: document.getElementById('wr-consistent')?.value,
+    committed: document.getElementById('wr-committed')?.value
+  };
+  const history = JSON.parse(localStorage.getItem('tfio_wr') || '[]');
+  history.unshift(entry);
+  localStorage.setItem('tfio_wr', JSON.stringify(history));
+  loadWRHistory();
+  showNotification('Weekly review saved ✓', 'success');
+}
+
+function loadWRHistory() {
+  const history = JSON.parse(localStorage.getItem('tfio_wr') || '[]');
+  const el = document.getElementById('wrHistory');
+  if(!el) return;
+  if(!history.length) { el.innerHTML = '<div class="history-empty">No reviews yet.</div>'; return; }
+  el.innerHTML = history.slice(0,8).map(e => `
+    <div class="history-item">
+      <div class="history-item-date">${fmtDate(e.date)}</div>
+      <div><strong>Week of ${e.week||'—'}</strong> — ${e.trades||0} trades | Process: ${e.score||'—'}/10 | 3Cs: C${e.calm} C${e.consistent} C${e.committed}</div>
+      ${e.improve ? `<div class="text-sm text-mid" style="margin-top:4px">Next week: ${e.improve.substring(0,100)}</div>` : ''}
+    </div>`).join('');
+}
+
+function downloadWeeklyReview() {
+  const history = JSON.parse(localStorage.getItem('tfio_wr') || '[]');
+  const txt = history.map(e => `Week: ${e.week}\nTrades: ${e.trades}\nBest pattern: ${e.best}\nWorst pattern: ${e.worst}\nProcess adherence: ${e.processCount}/10\nProcess score: ${e.score}/10\nImprovement: ${e.improve}\n3Cs — Calm: ${e.calm} Consistent: ${e.consistent} Committed: ${e.committed}`).join('\n\n---\n\n');
+  downloadTxt('weekly-reviews.txt', txt || 'No reviews yet.');
+}
+
+// ===================== TOOL 9: RECOVERY PROTOCOL =====================
+const RECOVERY_WEEKS = {
+  1: {
+    title: 'Week 1 — Full Stop',
+    desc: 'No trading. No charts. No planning. Rest and write.',
+    questions: [
+      {id: 'r1-q1', label: 'What happened? Write the sequence of events factually, not emotionally.'},
+      {id: 'r1-q2', label: 'What was the exact decision point where the failure began?'},
+      {id: 'r1-q3', label: 'How are you feeling right now? Be honest.'},
+      {id: 'r1-q4', label: 'What are you committed to doing differently when you return?'}
+    ],
+    checks: ['No charts opened this week','No challenge applications made','Sleep and routine maintained','Journal completed']
+  },
+  2: {
+    title: 'Week 2 — Analysis and Responsibility',
+    desc: 'Find the exact pattern. Name it. Own it.',
+    questions: [
+      {id: 'r2-q1', label: 'Complete this sentence: "I blew the account because I consistently chose to ________ when I felt ________."'},
+      {id: 'r2-q2', label: 'Which of the Ten Traps was operating? How did it manifest in specific trades?'},
+      {id: 'r2-q3', label: 'What limiting belief was driving the behaviour?'},
+      {id: 'r2-q4', label: 'What one rule, if followed without exception, would have prevented the failure?'}
+    ],
+    checks: ['Root cause identified (not blamed — identified)','Limiting belief written and reframed in Tool 7','New rule added to pre-trade checklist']
+  },
+  3: {
+    title: 'Week 3 — Demo Return',
+    desc: 'Return to demo. One setup. Clean execution. Journal every trade.',
+    questions: [
+      {id: 'r3-q1', label: 'Which specific area are you rebuilding on demo?'},
+      {id: 'r3-q2', label: 'How many trades completed? What was the process score average?'},
+      {id: 'r3-q3', label: 'Did the pattern from Week 2 appear on demo? How did you handle it?'},
+      {id: 'r3-q4', label: 'What does your demo performance tell you about your readiness?'}
+    ],
+    checks: ['Minimum 5 demo trades completed','Every trade journalled in Tool 5','No impulsive entries on demo','Pre-trade checklist used every time']
+  },
+  4: {
+    title: 'Week 4 — Process Assessment',
+    desc: 'Am I ready to return to live? The honest answer only.',
+    questions: [
+      {id: 'r4-q1', label: 'Is the specific pattern from Week 2 now handled consistently differently? Evidence?'},
+      {id: 'r4-q2', label: 'Are you trading from a neutral emotional state, or still carrying the previous blow-up?'},
+      {id: 'r4-q3', label: 'What is your financial position? Are bills covered? Do you have genuine surplus to deploy?'},
+      {id: 'r4-q4', label: 'Your decision: Return to live (smaller account) or continue on demo? Justify with evidence, not hope.'}
+    ],
+    checks: ['Process quality demonstrated over minimum 10 demo trades','Financial position assessed and stable','Identity reintegration complete — separated from previous result','Decision made from evidence, not urgency']
+  }
+};
+
+function selectWeek(w) {
+  activeWeek = w;
+  [1,2,3,4].forEach(n => {
+    const tab = document.getElementById('week-tab-' + n);
+    if(tab) {
+      tab.classList.remove('active-week');
+      const saved = JSON.parse(localStorage.getItem('tfio_recovery_w'+n) || 'null');
+      if(saved) tab.classList.add('completed-week');
+    }
+  });
+  const cur = document.getElementById('week-tab-' + w);
+  if(cur) cur.classList.add('active-week');
+
+  const wk = RECOVERY_WEEKS[w];
+  const saved = JSON.parse(localStorage.getItem('tfio_recovery_w'+w) || 'null');
+  const el = document.getElementById('recovery-week-content');
+  if(!el) return;
+
+  el.innerHTML = `
+    <div style="margin-bottom:20px">
+      <div class="lesson-eyebrow">${wk.title}</div>
+      <div style="color:var(--mid-grey);font-size:14px">${wk.desc}</div>
+    </div>
+    ${wk.questions.map(q => `
+      <div class="form-group">
+        <div class="form-label">${q.label}</div>
+        <textarea id="${q.id}" style="min-height:80px" placeholder="Write honestly...">${saved?.(q.id)||''}</textarea>
+      </div>`).join('')}
+    <div style="margin-top:20px">
+      <div class="form-label">Week ${w} completion checklist</div>
+      ${wk.checks.map((c,i) => `
+        <div class="checklist-item">
+          <div class="check-box ${saved?.checks?.[i]?'checked':''}" onclick="toggleCheck(this)">${saved?.checks?.[i]?'✓':''}</div>
+          <div class="checklist-text">${c}</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function saveRecovery() {
+  const wk = RECOVERY_WEEKS[activeWeek];
+  const data = { date: new Date().toISOString(), checks: [] };
+  wk.questions.forEach(q => { data[q.id] = document.getElementById(q.id)?.value || ''; });
+  document.querySelectorAll('#recovery-week-content .check-box').forEach(c => data.checks.push(c.classList.contains('checked')));
+  localStorage.setItem('tfio_recovery_w'+activeWeek, JSON.stringify(data));
+  const tab = document.getElementById('week-tab-'+activeWeek);
+  if(tab) tab.classList.add('completed-week');
+  showNotification('Week ' + activeWeek + ' progress saved ✓', 'success');
+}
+
+function downloadRecovery() {
+  let txt = '4-WEEK RECOVERY PROTOCOL\n\n';
+  [1,2,3,4].forEach(w => {
+    const wk = RECOVERY_WEEKS[w];
+    const saved = JSON.parse(localStorage.getItem('tfio_recovery_w'+w) || 'null');
+    txt += `${wk.title}\n${wk.desc}\n\n`;
+    if(saved) {
+      wk.questions.forEach(q => { txt += `${q.label}\n${saved[q.id]||'Not answered'}\n\n`; });
+      txt += `Checks: ${wk.checks.map((c,i) => (saved.checks?.[i]?'✓ ':'✗ ')+c).join(', ')}\n`;
+    } else {
+      txt += 'Not started\n';
+    }
+    txt += '\n---\n\n';
+  });
+  downloadTxt('recovery-protocol.txt', txt);
+}
+
+function loadRecovery() {}
+
+// ===================== TOOL 10: GOALS PLANNER =====================
+function saveGoals() {
+  const fields = ['goal-90','goal-6m','goal-12m','goal-financial','goal-personal','goal-identity'];
+  const data = { date: new Date().toISOString() };
+  fields.forEach(id => { data[id] = document.getElementById(id)?.value || ''; });
+  localStorage.setItem('tfio_goals', JSON.stringify(data));
+  const msg = document.getElementById('goals-save-msg');
+  if(msg) { msg.classList.remove('hidden'); setTimeout(() => msg.classList.add('hidden'), 3000); }
+  showNotification('Goals saved ✓', 'success');
+}
+
+function loadGoals() {
+  const data = JSON.parse(localStorage.getItem('tfio_goals') || 'null');
+  if(!data) return;
+  ['goal-90','goal-6m','goal-12m','goal-financial','goal-personal','goal-identity'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el && data[id]) el.value = data[id];
+  });
+}
+
+function downloadGoals() {
+  const fields = {
+    'goal-90': '90-Day Target',
+    'goal-6m': '6-Month Target',
+    'goal-12m': '12-Month Vision',
+    'goal-financial': 'Financial Stability Goal',
+    'goal-personal': 'Personal Development Goal',
+    'goal-identity': 'Identity Statement'
+  };
+  let txt = 'GOALS & STANDARDS PLANNER\n\n';
+  Object.entries(fields).forEach(([id, label]) => {
+    const el = document.getElementById(id);
+    txt += `${label}:\n${el?.value || 'Not filled in'}\n\n`;
+  });
+  downloadTxt('goals-planner.txt', txt);
+}
+
+// ===================== INIT =====================
+window.addEventListener('DOMContentLoaded', () => {
+  updateProgress();
+  renderHome();
+});
+
+</script>
+</body>
+</html>
