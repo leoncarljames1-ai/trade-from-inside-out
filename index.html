@@ -41,33 +41,35 @@
   .nav {
     position: fixed; top: 0; left: 0; right: 0;
     background: var(--navy);
-    height: 60px;
+    height: 56px;
     display: flex; align-items: center; justify-content: space-between;
-    padding: 0 24px;
+    padding: 0 12px;
     z-index: 1000;
     box-shadow: var(--shadow-md);
   }
   .nav-logo {
     font-family: var(--font-display);
     color: var(--white);
-    font-size: 17px;
+    font-size: 13px;
     font-weight: normal;
     letter-spacing: 0.02em;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
   .nav-logo span { color: var(--red); }
-  .nav-center { display: flex; gap: 4px; }
+  .nav-center { display: flex; gap: 2px; flex-shrink: 0; }
   .nav-btn {
     background: none; border: none; color: rgba(255,255,255,0.65);
-    font-family: var(--font-body); font-size: 13px;
-    padding: 6px 14px; border-radius: 20px; cursor: pointer;
-    transition: all 0.2s;
+    font-family: var(--font-body); font-size: 12px;
+    padding: 5px 10px; border-radius: 20px; cursor: pointer;
+    transition: all 0.2s; white-space: nowrap;
   }
   .nav-btn:hover, .nav-btn.active {
     background: rgba(255,255,255,0.12); color: var(--white);
   }
-  .nav-progress { display: flex; align-items: center; gap: 10px; }
+  .nav-progress { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
   .progress-bar {
-    width: 120px; height: 4px;
+    width: 60px; height: 4px;
     background: rgba(255,255,255,0.15);
     border-radius: 2px; overflow: hidden;
   }
@@ -78,8 +80,45 @@
   .progress-label { color: rgba(255,255,255,0.5); font-size: 12px; }
 
   /* VIEWS */
-  .view { display: none; padding-top: 60px; min-height: 100vh; }
+  .view { display: none; padding-top: 56px; min-height: 100vh; }
   .view.active { display: block; }
+
+
+  /* WELCOME BANNER */
+  .welcome-banner {
+    background: linear-gradient(135deg, var(--navy) 0%, #2A2A4E 100%);
+    border-bottom: 3px solid var(--red);
+    padding: 28px 24px;
+  }
+  .welcome-banner h2 {
+    font-family: var(--font-display);
+    color: var(--white); font-size: 18px;
+    font-weight: normal; margin-bottom: 12px;
+  }
+  .welcome-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px; margin-top: 16px;
+  }
+  .welcome-step {
+    background: rgba(255,255,255,0.07);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+  }
+  .welcome-step-num {
+    color: var(--red); font-size: 10px;
+    font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; margin-bottom: 4px;
+  }
+  .welcome-step p { color: rgba(255,255,255,0.75); font-size: 12px; margin: 0; }
+
+  /* DATA WARNING */
+  .data-warning {
+    background: rgba(230,126,34,0.08); border: 1px solid var(--warning);
+    border-radius: var(--radius); padding: 10px 14px;
+    font-size: 13px; color: var(--dark-grey); margin-bottom: 20px;
+  }
+  .data-warning strong { color: var(--warning); }
 
   /* HOME VIEW */
   .home-hero {
@@ -586,7 +625,7 @@
 
 <!-- NAV -->
 <nav class="nav">
-  <div class="nav-logo">Trade <span>From The Inside</span> Out</div>
+  <div class="nav-logo">TFIO <span>Course</span></div>
   <div class="nav-center">
     <button class="nav-btn active" onclick="showView('home')">Home</button>
     <button class="nav-btn" onclick="showView('lesson')">Modules</button>
@@ -600,10 +639,21 @@
 
 <!-- HOME VIEW -->
 <div class="view active" id="view-home">
+
+  <div class="welcome-banner">
+    <h2>How to use this programme</h2>
+    <div class="welcome-steps">
+      <div class="welcome-step"><div class="welcome-step-num">Step 1</div><p>Work through the 11 modules in order. Each one builds on the last.</p></div>
+      <div class="welcome-step"><div class="welcome-step-num">Step 2</div><p>Use the tools alongside the modules — not just after you finish reading.</p></div>
+      <div class="welcome-step"><div class="welcome-step-num">Step 3</div><p>Download your tool entries regularly. Your browser saves them but a download is your backup.</p></div>
+      <div class="welcome-step"><div class="welcome-step-num">Step 4</div><p>Each module takes around 15-20 minutes. The tools are for daily use, not just once.</p></div>
+    </div>
+  </div>
+
   <div class="home-hero">
     <div class="home-hero-eyebrow">A Complete Self-Development Programme for Traders</div>
     <h1>Trade <em>From</em> The Inside Out</h1>
-    <p>Most traders lose not because they lack strategy — but because the person executing the strategy hasn't been built yet. This programme changes that.</p>
+    <p>Most traders lose not because they lack strategy. They lose because the person executing the strategy hasn't been built yet. This programme changes that.</p>
     <div class="home-hero-quote">"I was diving into the deep sea without knowing how to swim properly." — Leon</div>
   </div>
 
@@ -616,7 +666,7 @@
 
     <div class="section-label">Your Tools</div>
     <div class="section-title">10 Interactive Tools</div>
-    <div class="section-sub">Save your work in the browser. Download anytime as a text file.</div>
+    <div class="section-sub">Everything saves in your browser. Download regularly — don't rely on browser storage alone.</div>
 
     <div class="tools-grid" id="toolsGrid"></div>
   </div>
@@ -652,8 +702,8 @@ const MODULES = [
 <div class="leon-story"><div class="leon-story-label">Leon's Story — A Foreword</div><p>I've spent years wondering why I kept making the same mistakes. In trading. In business. In my personal life. I'd buy a course and feel hope. Three weeks later, I'd buy another. I told myself each one would be different. It never was. Not because the courses were bad — but because I hadn't changed the person doing the buying. I was reacting, not responding. Surviving, not thinking. And I had no idea. This programme is what I wish existed before I lost £10,000+ and years of momentum to that pattern. It starts here — with the mirror.</p></div>
 
 <h2>Why Self-Awareness Comes First</h2>
-<p>Most trading education starts with charts. This one starts with you. Not because charts don't matter — they do. But because 80% of your trading results will come from the person behind the screen, not the system on it.</p>
-<p>Michael often says: <em>"You cannot trade beyond your level of self-awareness."</em> A strategy that works for one trader will destroy another — not because the strategy is flawed, but because the second trader's patterns sabotage it before it can work.</p>
+<p>Most trading education starts with charts. This one starts with you. Charts matter. But 80% of your trading results will come from the person behind the screen, not the system on it.</p>
+<p>James often says: <em>"You cannot trade beyond your level of self-awareness."</em> A strategy that works for one trader will destroy another — the strategy isn't the problem — the second trader's patterns sabotage it before it can work.</p>
 
 <div class="pullquote">"You don't rise to the level of your goals. You fall to the level of your systems — and your systems are built by the person you currently are."</div>
 
@@ -669,7 +719,7 @@ const MODULES = [
 <li><strong>Believing in shortcuts</strong> — signals, automation, "guaranteed" systems</li>
 </ul>
 
-<div class="insight-box"><div class="insight-box-label">Michael Says</div><p>"The market doesn't create your patterns. It reveals them. Everything you've been is on full display the moment real money is at stake. The good news? That means you can work on it."</p></div>
+<div class="insight-box"><div class="insight-box-label">James Says</div><p>"The market doesn't create your patterns. It reveals them. Everything you've been is on full display the moment real money is at stake. The good news? That means you can work on it."</p></div>
 
 <h2>What Survival Mode Looks Like in Trading</h2>
 <p>When we feel financial pressure, the logical brain (prefrontal cortex) goes quiet. The survival brain (amygdala) takes over. This is the state where most trading mistakes are made.</p>
@@ -709,7 +759,7 @@ const MODULES = [
 <div class="lesson-body">
 <h2>What Prop Firms Actually Are</h2>
 <p>Prop firms don't fund traders out of generosity. They are businesses with a specific model: charge challenge fees, retain most traders at the challenge stage, and profit-share with the small percentage who consistently produce results.</p>
-<p>Understanding this isn't cynical — it's clarifying. You're not trying to "beat" a system. You're proving to a business that you can manage risk within defined parameters. That's a professional skill, not a gambling win.</p>
+<p>That's not cynical — it's just clarifying. You're not trying to "beat" a system. You're proving to a business that you can manage risk within defined parameters. That's a professional skill, not a gambling win.</p>
 
 <div class="insight-box"><div class="insight-box-label">The Numbers Reality</div><p>Fewer than 10% of traders pass prop firm challenges on their first attempt. Of those who pass, many fail during the funded stage due to psychology — not strategy. The challenge reveals your discipline. The funded account reveals your identity.</p></div>
 
@@ -774,7 +824,7 @@ const MODULES = [
     content: `
 <div class="lesson-body">
 <h2>Your Brain Was Not Built for Trading</h2>
-<p>The human brain evolved to survive predators on a savanna — not to stay calm while a position moves against you. Understanding this isn't an excuse. It's the most practical piece of trading education you'll receive.</p>
+<p>The human brain evolved to survive predators on a savanna — not to stay calm while a position moves against you. Understanding this isn't an excuse for anything. It's the most practical thing you'll learn in this whole programme.</p>
 
 <h2>The Trigger Loop</h2>
 <p>Every impulsive trading decision follows the same four-step loop:</p>
@@ -850,7 +900,7 @@ const MODULES = [
 <h2>Trap 5: The 3-Stage Breakdown</h2>
 <p>A predictable sequence: (1) Small loss — discipline holds. (2) Second loss — frustration enters. (3) Third trade — revenge trade, oversize, breaks all rules. The pattern is predictable. The interruption point is between Stage 2 and Stage 3: walk away.</p>
 
-<div class="insight-box"><div class="insight-box-label">Michael's Rule</div><p>"Two consecutive losses in a session = session over. No exceptions. Not because two losses means you're wrong. Because two losses means your emotional state is no longer neutral, and a non-neutral state produces non-neutral decisions."</p></div>
+<div class="insight-box"><div class="insight-box-label">James's Rule</div><p>"Two consecutive losses in a session = session over. No exceptions. Not because two losses means you're wrong. Because two losses means your emotional state is no longer neutral, and a non-neutral state produces non-neutral decisions."</p></div>
 
 <h2>Trap 6: The Simulation Illusion</h2>
 <p>Performing brilliantly on demo, then falling apart on live. Not because the strategy doesn't work — because the emotional stakes are absent in simulation. The brain learns in the state it's trained. Demo performance doesn't predict live performance unless emotional management has been trained live.</p>
@@ -1160,14 +1210,14 @@ const MODULES = [
 
 <h2>Trading Budget Only From Surplus</h2>
 <p>The target: your trading account feels like an investment, not a lifeline. When you deposit money you genuinely cannot afford to lose, every trade becomes a survival decision. That state destroys objectivity.</p>
-<p>Build income stability first. Trade from surplus. This isn't a luxury — it's a prerequisite for professional performance.</p>
+<p>Build income stability first. Trade from surplus. This isn't optional — it's the only way this works.</p>
 </div>`
   },
   {
-    id: 10, name: "After The Payout",
-    subtitle: "Identity reintegration and the 4-week recovery protocol",
+    id: 10, name: "After The Blow-Up",
+    subtitle: "What to do after losing a funded account — and how to come back right",
     icon: "🔄",
-    desc: "What happens after you blow a funded account — and the structured path back. Three patterns, four weeks, one mission.",
+    desc: "Three patterns, four weeks, one mission. The professional way to recover after a funded account failure.",
     content: `
 <div class="lesson-body">
 <h2>What Nobody Talks About</h2>
@@ -1189,7 +1239,7 @@ const MODULES = [
 
 <h2>Identity Reintegration</h2>
 <p>When you've identified heavily as a funded trader, losing the account can feel like losing yourself. This is identity debt — when your sense of self is attached to a trading result.</p>
-<p>The reintegration process requires separating who you are from what your account says. You are not your drawdown. You are not your last trade. You are a professional in development, and development includes setbacks.</p>
+<p>The reintegration process requires separating who you are from what your account says. Your drawdown doesn't define you. Your last trade doesn't define you. You're a professional in development, and development includes setbacks.</p>
 
 <h2>The 4-Week Recovery Protocol</h2>
 
@@ -1239,7 +1289,7 @@ const MODULES = [
 </ul>
 <p>A session where you lose money but score 3/3 on the Three Cs is a professional session. A session where you make money but score 0/3 is a dangerous one — it teaches the wrong lesson.</p>
 
-<div class="insight-box"><div class="insight-box-label">Michael's Measure</div><p>"I don't ask traders how much they made this week. I ask them how many times they followed their process. The money follows the process. Always measure what you can control."</p></div>
+<div class="insight-box"><div class="insight-box-label">James's Measure</div><p>"I don't ask traders how much they made this week. I ask them how many times they followed their process. The money follows the process. Always measure what you can control."</p></div>
 
 <h2>The Professional Mindset Table</h2>
 <div class="result-box">
@@ -1286,7 +1336,7 @@ const MODULES = [
 </ul>
 <p>The Sunday Review is where insights from the week consolidate into permanent change. Without it, you repeat the week's patterns endlessly.</p>
 
-<div class="pullquote">"This isn't a course you complete. It's a practice you return to. The trader you become is built one session at a time, one decision at a time, one honest reflection at a time."</div>
+<div class="pullquote">"This programme isn't something you complete. It's something you return to. The trader you become is built one session at a time, one decision at a time, one honest reflection at a time."</div>
 </div>`
   }
 ];
